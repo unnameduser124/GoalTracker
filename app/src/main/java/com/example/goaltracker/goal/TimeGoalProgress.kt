@@ -8,6 +8,17 @@ fun getTimeDifferenceInDays(start: Calendar, end: Calendar): Int{
     return floor(timeInMillis/1000.0/60/60/24).toInt()
 }
 
+fun getTimeDifferenceInMonths(start: Calendar, end: Calendar): Double{
+    val months = (end.get(Calendar.YEAR) - start.get(Calendar.YEAR)) * 12 + end.get(Calendar.MONTH) - start.get(Calendar.MONTH)
+    val days = end.get(Calendar.DATE) - start.get(Calendar.DATE)
+    return months + days.toDouble() / end.getActualMaximum(Calendar.DATE)
+}
+
+fun getTimeDifferenceInYears(start: Calendar, end: Calendar): Double{
+    val dayDiff = getTimeDifferenceInDays(start, end)
+    return dayDiff.toDouble()/365.0
+}
+
 fun getGoalTotalTime(goal: TimeGoal): Int{
     val timeInMillis = goal.endTime.timeInMillis - goal.startTime.timeInMillis
     return floor(timeInMillis/1000.0/60/60/24).toInt() + 2
@@ -17,31 +28,41 @@ fun getInitialExpectedDailyAverageTime(goal: TimeGoal): Double{
     val timeConstraint = getGoalTotalTime(goal)
     return goal.goalTimeAmount/timeConstraint
 }
+
 fun getInitialExpectedMonthlyAverage(goal: TimeGoal): Double{
-    TODO("Not implemented yet")
+    return goal.goalTimeAmount / getTimeDifferenceInMonths(goal.startTime, goal.endTime)
 }
+
 fun getInitialExpectedYearlyAverage(goal: TimeGoal): Double{
-    TODO("Not implemented yet")
+    return goal.goalTimeAmount / getTimeDifferenceInYears(goal.startTime, goal.endTime)
 }
 
 fun getCurrentExpectedDailyAverageTime(goal: TimeGoal): Double{
-    TODO("Not implemented yet")
+    val goalTimeLeft = goal.goalTimeAmount - goal.currentTimeAmount
+    val timeLeft = getTimeDifferenceInDays(Calendar.getInstance(), goal.endTime)
+    return goalTimeLeft/timeLeft
 }
+
 fun getCurrentExpectedMonthlyAverageTime(goal: TimeGoal): Double{
-    TODO("Not implemented yet")
+    val goalTimeLeft = goal.goalTimeAmount - goal.currentTimeAmount
+    val timeLeft = getTimeDifferenceInMonths(Calendar.getInstance(), goal.endTime)
+    return goalTimeLeft/timeLeft
 }
+
 fun getCurrentExpectedYearlyAverageTime(goal: TimeGoal): Double{
-    TODO("Not implemented yet")
+    val goalTimeLeft = goal.goalTimeAmount - goal.currentTimeAmount
+    val timeLeft = getTimeDifferenceInYears(Calendar.getInstance(), goal.endTime)
+    return goalTimeLeft/timeLeft
 }
 
 fun getRealDailyAverageTime(goal: TimeGoal): Double{
-    TODO("Not implemented yet")
+    return goal.currentTimeAmount / getTimeDifferenceInDays(goal.startTime, Calendar.getInstance())
 }
 fun getRealMonthlyAverageTime(goal: TimeGoal): Double{
-    TODO("Not implemented yet")
+    return goal.currentTimeAmount / getTimeDifferenceInMonths(goal.startTime, Calendar.getInstance())
 }
 fun getRealYearlyAverageTime(goal: TimeGoal): Double{
-    TODO("Not implemented yet")
+    return goal.currentTimeAmount / getTimeDifferenceInYears(goal.startTime, Calendar.getInstance())
 }
 
 fun getTimeDebt(goal: TimeGoal): Double{
@@ -68,8 +89,14 @@ fun getMonthlyProgressPercentage(goal: TimeGoal, month: Calendar): Double{
         currentMonthTime+=it.timeAmount
     }
 
-    TODO("Have to implement current expected montly time before implementing this one")
+    return getCurrentExpectedMonthlyAverageTime(goal)/currentMonthTime
 }
-fun getYearlyProgressPercentage(goal: TimeGoal): Double{
-    TODO("Not implemented yet")
+fun getYearlyProgressPercentage(goal: TimeGoal, year: Calendar): Double{
+    val entries = goal.getEntriesForYear(year)
+    var currentYearTime = 0.0
+    entries.forEach{
+        currentYearTime+=it.timeAmount
+    }
+
+    return getCurrentExpectedYearlyAverageTime(goal)/currentYearTime
 }

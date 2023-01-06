@@ -23,4 +23,10 @@ class TimeGoal(
             it.date.get(Calendar.MONTH) == month.get(Calendar.MONTH)
         }
     }
+
+    fun getEntriesForYear(year: Calendar): List<GoalEntry> {
+        return goalEntries.filter {
+            it.date.get(Calendar.YEAR) == year.get(Calendar.MONTH)
+        }
+    }
 }
