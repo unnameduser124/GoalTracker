@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">GoalTracker</string>
+    <string name="goal_time_amount_label">Goal</string>
+    <string name="current_time_amount_label">Current</string>
+    <string name="goal_start_time_label">Start</string>
+    <string name="goal_end_time_label">End</string>
+    <string name="goal_time_left_label">Time left</string>
+    <string name="goal_percentage_completed_label">% completed</string>
 </resources>
