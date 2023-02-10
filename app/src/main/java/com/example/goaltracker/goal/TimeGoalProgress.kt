@@ -20,7 +20,7 @@ fun getTimeDifferenceInYears(start: Calendar, end: Calendar): Double{
 }
 
 fun getGoalTotalTime(goal: TimeGoal): Int{
-    val timeInMillis = goal.endTime.timeInMillis - goal.startTime.timeInMillis
+    val timeInMillis = goal.deadline.timeInMillis - goal.startTime.timeInMillis
     return floor(timeInMillis/1000.0/60/60/24).toInt() + 2
 }
 
@@ -30,28 +30,28 @@ fun getInitialExpectedDailyAverageTime(goal: TimeGoal): Double{
 }
 
 fun getInitialExpectedMonthlyAverage(goal: TimeGoal): Double{
-    return goal.goalTimeAmount / getTimeDifferenceInMonths(goal.startTime, goal.endTime)
+    return goal.goalTimeAmount / getTimeDifferenceInMonths(goal.startTime, goal.deadline)
 }
 
 fun getInitialExpectedYearlyAverage(goal: TimeGoal): Double{
-    return goal.goalTimeAmount / getTimeDifferenceInYears(goal.startTime, goal.endTime)
+    return goal.goalTimeAmount / getTimeDifferenceInYears(goal.startTime, goal.deadline)
 }
 
 fun getCurrentExpectedDailyAverageTime(goal: TimeGoal): Double{
     val goalTimeLeft = goal.goalTimeAmount - goal.currentTimeAmount
-    val timeLeft = getTimeDifferenceInDays(Calendar.getInstance(), goal.endTime)
+    val timeLeft = getTimeDifferenceInDays(Calendar.getInstance(), goal.deadline)
     return goalTimeLeft/timeLeft
 }
 
 fun getCurrentExpectedMonthlyAverageTime(goal: TimeGoal): Double{
     val goalTimeLeft = goal.goalTimeAmount - goal.currentTimeAmount
-    val timeLeft = getTimeDifferenceInMonths(Calendar.getInstance(), goal.endTime)
+    val timeLeft = getTimeDifferenceInMonths(Calendar.getInstance(), goal.deadline)
     return goalTimeLeft/timeLeft
 }
 
 fun getCurrentExpectedYearlyAverageTime(goal: TimeGoal): Double{
     val goalTimeLeft = goal.goalTimeAmount - goal.currentTimeAmount
-    val timeLeft = getTimeDifferenceInYears(Calendar.getInstance(), goal.endTime)
+    val timeLeft = getTimeDifferenceInYears(Calendar.getInstance(), goal.deadline)
     return goalTimeLeft/timeLeft
 }
 
