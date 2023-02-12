@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.provider.BaseColumns
 import com.example.goaltracker.dataClasses.DataCountdownGoal
+import com.example.goaltracker.dataClasses.DataGoalSession
 import com.example.goaltracker.database.GoalDatabaseConstants.CountdownGoalTable.END_TIME
 import com.example.goaltracker.database.GoalDatabaseConstants.CountdownGoalTable.GOAL_NAME
 import com.example.goaltracker.database.GoalDatabaseConstants.CountdownGoalTable.START_TIME
@@ -60,6 +61,23 @@ class CountdownGoalDatabaseService(context: Context): GoalDatabase(context) {
             }
         }
         return null
+    }
+
+    fun updateGoalByID(id: Long, goal: CountdownGoal){
+        val db = this.writableDatabase
+
+        val dataGoal = DataCountdownGoal(goal)
+
+        val contentValues = ContentValues().apply{
+            put(START_TIME, dataGoal.goalStartTime)
+            put(END_TIME, dataGoal.goalEndTime)
+            put(GOAL_NAME, dataGoal.goalName)
+        }
+
+        val selection = "${BaseColumns._ID} = ?"
+        val selectionArgs = arrayOf(id.toString())
+
+        db.update(TABLE_NAME, contentValues, selection, selectionArgs)
     }
 
     fun deleteGoalByID(id: Long){

@@ -3,14 +3,12 @@ package com.example.goaltracker.database
 import android.content.ContentValues
 import android.content.Context
 import android.provider.BaseColumns
-import com.example.goaltracker.dataClasses.DataCountdownGoal
 import com.example.goaltracker.dataClasses.DataGoalSession
 import com.example.goaltracker.dataClasses.DataTimeGoal
-import com.example.goaltracker.goal.TimeGoal
-import com.example.goaltracker.database.GoalDatabaseConstants.SessionTable.TABLE_NAME
 import com.example.goaltracker.database.GoalDatabaseConstants.SessionTable.GOAL_ID
-import com.example.goaltracker.database.GoalDatabaseConstants.SessionTable.TIME_AMOUNT
 import com.example.goaltracker.database.GoalDatabaseConstants.SessionTable.SESSION_DATE
+import com.example.goaltracker.database.GoalDatabaseConstants.SessionTable.TABLE_NAME
+import com.example.goaltracker.database.GoalDatabaseConstants.SessionTable.TIME_AMOUNT
 import com.example.goaltracker.goal.GoalSession
 
 class SessionDatabaseService(context: Context): GoalDatabase(context) {
@@ -63,6 +61,23 @@ class SessionDatabaseService(context: Context): GoalDatabase(context) {
             }
         }
         return null
+    }
+
+    fun updateSessionByID(id: Long, session: GoalSession){
+        val db = this.writableDatabase
+
+        val dataSession = DataGoalSession(session)
+
+        val contentValues = ContentValues().apply{
+            put(TIME_AMOUNT, dataSession.timeAmount)
+            put(SESSION_DATE, dataSession.date)
+            put(GOAL_ID, dataSession.goalID)
+        }
+
+        val selection = "${BaseColumns._ID} = ?"
+        val selectionArgs = arrayOf(id.toString())
+
+        db.update(TABLE_NAME, contentValues, selection, selectionArgs)
     }
 
     fun deleteGoalByID(id: Long){

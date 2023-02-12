@@ -44,4 +44,5 @@ class TimeGoal(
             it.date.get(Calendar.YEAR) == year.get(Calendar.MONTH)
         }
     }
+
 }
