@@ -34,12 +34,14 @@ class SessionDatabaseService(context: Context): GoalDatabase(context) {
             SESSION_DATE,
             GOAL_ID
         )
+        val selection = "${BaseColumns._ID} = ?"
+        val selectionArgs = arrayOf(id.toString())
 
         val cursor = db.query(
             TABLE_NAME,
             projection,
-            null,
-            null,
+            selection,
+            selectionArgs,
             null,
             null,
             null

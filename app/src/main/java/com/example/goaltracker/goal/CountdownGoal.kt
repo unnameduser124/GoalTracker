@@ -3,8 +3,8 @@ package com.example.goaltracker.goal
 import com.example.goaltracker.dataClasses.DataCountdownGoal
 import java.util.*
 
-class CountdownGoal(val goalID: Long,
-                    var goalName: String,
+class CountdownGoal(val ID: Long,
+                    var name: String,
                     var startTime: Calendar,
                     var endTime: Calendar,
                     val sessionList: MutableList<GoalSession>){

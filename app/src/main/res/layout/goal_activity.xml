@@ -16,16 +16,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id = "@+id/appbar_goal_name"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf = "parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/sessions_button"
+                android:layout_marginStart="20dp"
+                android:textAlignment="viewStart"
                 android:textColor="@color/white"
                 android:textSize = "20sp"
-                tools:text = "Goal Tracker"/>
+                tools:text = "goal name"/>
             <com.google.android.material.button.MaterialButton
                 android:layout_width="40dp"
                 android:layout_height="0dp"
@@ -110,7 +112,7 @@
         android:id = "@+id/goal_start_time"
         app:layout_constraintTop_toBottomOf="@id/goal_time_amount"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/goal_end_time"
+        app:layout_constraintEnd_toStartOf="@id/goal_deadline"
         tools:text = "01.01.2023"
         android:gravity="center"
         android:textSize = "22sp"
@@ -118,15 +120,15 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id = "@+id/goal_end_time_label"
-        app:layout_constraintStart_toStartOf="@id/goal_end_time"
-        app:layout_constraintEnd_toEndOf="@id/goal_end_time"
-        app:layout_constraintBottom_toTopOf="@id/goal_end_time"
+        android:id = "@+id/goal_deadline_label"
+        app:layout_constraintStart_toStartOf="@id/goal_deadline"
+        app:layout_constraintEnd_toEndOf="@id/goal_deadline"
+        app:layout_constraintBottom_toTopOf="@id/goal_deadline"
         android:text = "@string/goal_end_time_label"/>
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:id = "@+id/goal_end_time"
+        android:id = "@+id/goal_deadline"
         app:layout_constraintTop_toBottomOf="@id/current_time_amount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/goal_start_time"
@@ -168,7 +170,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id = "@+id/goal_time_left"
-        app:layout_constraintTop_toBottomOf="@id/goal_end_time"
+        app:layout_constraintTop_toBottomOf="@id/goal_deadline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/goal_percentage_completed"
         tools:text = "320d 11h 14min"

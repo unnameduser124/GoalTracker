@@ -41,11 +41,14 @@ class TimeGoalDatabaseService(context: Context): GoalDatabase(context){
             DEADLINE
         )
 
+        val selection = "${BaseColumns._ID} = ?"
+        val selectionArgs = arrayOf(id.toString())
+
         val cursor = db.query(
             TABLE_NAME,
             projection,
-            null,
-            null,
+            selection,
+            selectionArgs,
             null,
             null,
             null

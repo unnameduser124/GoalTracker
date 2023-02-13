@@ -4,8 +4,8 @@ import com.example.goaltracker.dataClasses.DataTimeGoal
 import java.util.Calendar
 
 class TimeGoal(
-    val goalID: Long,
-    var goalName: String,
+    val ID: Long,
+    var name: String,
     var goalTimeAmount: Double,
     var currentTimeAmount: Double,
     val startTime: Calendar,

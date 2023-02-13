@@ -25,6 +25,12 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+        <activity
+            android:name=".AddActivity"
+            android:parentActivityName=".MainActivity"/>
+        <activity
+            android:name=".goalActivity.GoalActivity"
+            android:parentActivityName=".MainActivity"/>
     </application>
 
 </manifest>
