@@ -41,8 +41,10 @@ class AddActivity: AppCompatActivity() {
     private fun createGoalFromFields(): TimeGoal{
         val name = binding.addGoalNameInput.text.toString()
         val timeAmount = binding.addGoalTimeAmountInput.text.toString().toDouble()
-        val startTime = calendarFromDatePicker(binding.addGoalStartDate)
-        val deadline = calendarFromDatePicker(binding.addGoalDeadlineDate)
+        var startTime = calendarFromDatePicker(binding.addGoalStartDate)
+        startTime = clearHoursAndMinutes(startTime)
+        var deadline = calendarFromDatePicker(binding.addGoalDeadlineDate)
+        deadline = clearHoursAndMinutes(deadline)
 
         return TimeGoal(-1, name, timeAmount, 0.0, startTime, deadline)
     }
@@ -62,6 +64,13 @@ class AddActivity: AppCompatActivity() {
         calendar.set(Calendar.YEAR, year)
         calendar.set(Calendar.MONTH, month)
         calendar.set(Calendar.DAY_OF_MONTH, day)
+        return calendar
+    }
+
+    private fun clearHoursAndMinutes(calendar: Calendar): Calendar{
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
         return calendar
     }
 }

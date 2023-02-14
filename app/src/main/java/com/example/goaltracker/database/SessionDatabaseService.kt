@@ -13,19 +13,20 @@ import com.example.goaltracker.goal.GoalSession
 
 class SessionDatabaseService(context: Context): GoalDatabase(context) {
 
-    fun addGoal(session: GoalSession){
+    fun addSession(session: GoalSession){
+        val db = this.writableDatabase
         val goalSession = DataGoalSession(session)
 
         val contentValues = ContentValues().apply{
             put(TIME_AMOUNT, goalSession.timeAmount)
-            put(TIME_AMOUNT, goalSession.date)
-            put(TIME_AMOUNT, goalSession.goalID)
+            put(SESSION_DATE, goalSession.date)
+            put(GOAL_ID, goalSession.goalID)
         }
 
-        this.writableDatabase.insert(TABLE_NAME, null, contentValues)
+        println(db.insert(TABLE_NAME, null, contentValues))
     }
 
-    fun getGoalByID(id: Long): DataGoalSession?{
+    fun getSessionByID(id: Long): DataGoalSession?{
         val db = this.readableDatabase
 
         val projection = arrayOf(
@@ -82,7 +83,7 @@ class SessionDatabaseService(context: Context): GoalDatabase(context) {
         db.update(TABLE_NAME, contentValues, selection, selectionArgs)
     }
 
-    fun deleteGoalByID(id: Long){
+    fun deleteSessionByID(id: Long){
         val db = this.writableDatabase
 
         val selection = "${BaseColumns._ID} = ?"
@@ -90,6 +91,48 @@ class SessionDatabaseService(context: Context): GoalDatabase(context) {
         val selectionArgs = arrayOf(id.toString())
 
         db.delete(TABLE_NAME, selection, selectionArgs)
+    }
+
+    fun getSessionsForGoal(goalID: Long): MutableList<GoalSession>{
+        val db = this.readableDatabase
+
+        val projection = arrayOf(
+            BaseColumns._ID,
+            TIME_AMOUNT,
+            SESSION_DATE,
+            GOAL_ID
+        )
+        val selection = "$GOAL_ID = ?"
+        val selectionArgs = arrayOf(goalID.toString())
+
+        val cursor = db.query(
+            TABLE_NAME,
+            projection,
+            selection,
+            selectionArgs,
+            null,
+            null,
+            null
+        )
+
+        val sessionList = mutableListOf<GoalSession>()
+
+        with(cursor){
+            while(moveToNext()) {
+                val sessionID = getLong(getColumnIndexOrThrow(BaseColumns._ID))
+                val timeAmount = getLong(getColumnIndexOrThrow(TIME_AMOUNT))
+                val date = getLong(getColumnIndexOrThrow(SESSION_DATE))
+
+                val goalSession = GoalSession(DataGoalSession(
+                    sessionID,
+                    timeAmount,
+                    date,
+                    goalID
+                ))
+                sessionList.add(goalSession)
+            }
+        }
+        return sessionList
     }
 
 }

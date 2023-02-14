@@ -185,7 +185,7 @@
         android:layout_height="wrap_content"
         android:id = "@+id/goal_time_debt_label"
         app:layout_constraintBottom_toTopOf="@id/goal_time_debt"
-        tools:text="Time below expected"
+        android:text="@string/time_below_expected_label"
         android:gravity="center"/>
     <TextView
         android:layout_width="match_parent"
@@ -218,4 +218,13 @@
         android:background="@color/black"
         app:tabTextColor="@color/white" />
 
+    <Button
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:id = "@+id/add_session_button"
+        app:layout_constraintBottom_toTopOf="@id/goal_stats_tab_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/ic_baseline_add_circle_24"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

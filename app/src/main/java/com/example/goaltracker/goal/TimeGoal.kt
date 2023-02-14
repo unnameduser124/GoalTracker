@@ -10,7 +10,7 @@ class TimeGoal(
     var currentTimeAmount: Double,
     val startTime: Calendar,
     var deadline: Calendar,
-    val goalSessions: MutableList<GoalSession> = mutableListOf(),
+    var goalSessions: MutableList<GoalSession> = mutableListOf(),
 ) {
 
     constructor(data: DataTimeGoal): this(data.goalID,

@@ -66,15 +66,15 @@ fun getRealYearlyAverageTime(goal: TimeGoal): Double{
 }
 
 fun getTimeDebt(goal: TimeGoal): Double{
-    val currentTime = Calendar.getInstance().apply{
+    val currentTime = Calendar.getInstance()
+    if(currentTime.timeInMillis >= goal.deadline.timeInMillis){
+        return goal.goalTimeAmount - goal.currentTimeAmount
     }
 
-    println(currentTime.time)
-
-    val passedTime = getTimeDifferenceInDays(goal.startTime, currentTime)
+    val timePassed= getTimeDifferenceInDays(goal.startTime, currentTime) + 1
     val expectedDaily = getInitialExpectedDailyAverageTime(goal)
 
-    val expectedTimeAmount = passedTime * expectedDaily
+    val expectedTimeAmount = timePassed * expectedDaily
 
     return expectedTimeAmount - goal.currentTimeAmount
 }
