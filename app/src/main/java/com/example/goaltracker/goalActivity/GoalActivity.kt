@@ -3,12 +3,10 @@ package com.example.goaltracker.goalActivity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.DatePicker
 import android.widget.PopupWindow
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.goaltracker.*
 import com.example.goaltracker.database.SessionDatabaseService
 import com.example.goaltracker.database.TimeGoalDatabaseService
@@ -17,10 +15,10 @@ import com.example.goaltracker.databinding.GoalActivityBinding
 import com.example.goaltracker.goal.GoalSession
 import com.example.goaltracker.goal.TimeGoal
 import com.example.goaltracker.goal.getTimeDebt
+import com.example.goaltracker.sessionList.GoalSessionListActivity
 import java.text.SimpleDateFormat
 import kotlin.math.floor
 import java.util.*
-import kotlin.math.min
 
 class GoalActivity: AppCompatActivity() {
     private lateinit var binding: GoalActivityBinding
@@ -68,7 +66,7 @@ class GoalActivity: AppCompatActivity() {
             roundDouble((goal.currentTimeAmount/goal.goalTimeAmount)*100, 10)
         )
 
-        binding.goalTimeDebt.text = String.format(getString(R.string.goal_time_debt_placeholder), roundDouble(getTimeDebt(goal), 10))
+        binding.goalTimeDebt.text = String.format(getString(R.string.hours_placeholder), roundDouble(getTimeDebt(goal), 10))
 
         binding.addSessionButton.setOnClickListener{
             val popupBinding = AddSessionPopupBinding.inflate(layoutInflater)
@@ -89,6 +87,12 @@ class GoalActivity: AppCompatActivity() {
                 dbService.updateGoalByID(goal.ID, goal)
                 updateViews(goal)
             }
+        }
+
+        binding.sessionsButton.setOnClickListener {
+            val intent = Intent(this, GoalSessionListActivity::class.java)
+            intent.putExtra("GOAL_ID", goal.ID)
+            startActivity(intent)
         }
 
     }
@@ -120,6 +124,6 @@ class GoalActivity: AppCompatActivity() {
             roundDouble((goal.currentTimeAmount/goal.goalTimeAmount)*100, 10)
         )
 
-        binding.goalTimeDebt.text = String.format(getString(R.string.goal_time_debt_placeholder), roundDouble(getTimeDebt(goal), 10))
+        binding.goalTimeDebt.text = String.format(getString(R.string.hours_placeholder), roundDouble(getTimeDebt(goal), 10))
     }
 }

@@ -6,8 +6,10 @@ data class DataGoalSession(val sessionID: Long,
                            val date: Long,
                            val timeAmount: Long,
                            val goalID: Long){
-    constructor(goalSession: GoalSession): this(goalSession.sessionID,
-        goalSession.date.timeInMillis/1000,
-        (goalSession.timeAmount*3600).toLong(),
-        goalSession.goalID)
+    constructor(goalSession: GoalSession): this(goalSession.ID,
+        goalSession.date.timeInMillis,
+        (goalSession.timeAmount).toLong(),
+        goalSession.goalID){
+        println(goalSession.timeAmount)
+    }
 }

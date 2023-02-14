@@ -125,8 +125,8 @@ class SessionDatabaseService(context: Context): GoalDatabase(context) {
 
                 val goalSession = GoalSession(DataGoalSession(
                     sessionID,
-                    timeAmount,
                     date,
+                    timeAmount,
                     goalID
                 ))
                 sessionList.add(goalSession)

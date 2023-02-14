@@ -10,10 +10,10 @@ import com.example.goaltracker.R
 import com.example.goaltracker.goal.TimeGoal
 import com.example.goaltracker.goalActivity.GoalActivity
 
-class GoalListItemAdapter(val dataset: MutableList<TimeGoal>): RecyclerView.Adapter<GoalListItemAdapter.ItemViewHolder>(){
+class GoalListItemAdapter(private val dataset: MutableList<TimeGoal>): RecyclerView.Adapter<GoalListItemAdapter.ItemViewHolder>(){
 
     class ItemViewHolder(view: View): RecyclerView.ViewHolder(view){
-        val goalName = view.findViewById<TextView>(R.id.goal_list_item_goal_name)
+        val goalName: TextView = view.findViewById(R.id.goal_list_item_goal_name)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {

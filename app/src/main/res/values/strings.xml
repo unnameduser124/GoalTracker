@@ -20,7 +20,8 @@
     <string name="time_below_expected_label">Time below expected</string>
     <string name="goal_time_left_placeholder">%1$sd %2$sh %3$smin</string>
     <string name="goal_percentage_completed_placeholder">%1$s</string>
-    <string name="goal_time_debt_placeholder">%1$sh</string>
+    <string name="hours_placeholder">%1$sh</string>
     <string name="time_in_hours_label">time in hours</string>
     <string name="add_session_label">Add session</string>
+    <string name="sessions_appbar_label">Sessions</string>
 </resources>
