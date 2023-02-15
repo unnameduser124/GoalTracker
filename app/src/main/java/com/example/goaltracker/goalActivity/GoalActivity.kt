@@ -48,7 +48,7 @@ class GoalActivity: AppCompatActivity() {
 
         binding.appbarGoalName.text = goal.name
         binding.goalTimeAmount.text = String.format(getString(R.string.goal_time_amount_placeholder), roundDouble(goal.goalTimeAmount, 10))
-        binding.currentTimeAmount.text = String.format(getString(R.string.goal_time_amount_placeholder), roundDouble(goal.currentTimeAmount, 10))
+        binding.currentTimeAmount.text = String.format(getString(R.string.goal_time_amount_placeholder), roundDouble(goal.getCurrentTimeAmount(this), 10))
         val simpleDateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.ROOT)
         binding.goalStartTime.text = simpleDateFormat.format(goal.startTime.time)
         binding.goalDeadline.text = simpleDateFormat.format(goal.deadline.time)
@@ -63,7 +63,7 @@ class GoalActivity: AppCompatActivity() {
 
         binding.goalPercentageCompleted.text = String.format(
             getString(R.string.goal_percentage_completed_placeholder),
-            roundDouble((goal.currentTimeAmount/goal.goalTimeAmount)*100, 10)
+            roundDouble((goal.getCurrentTimeAmount(this)/goal.goalTimeAmount)*100, 10)
         )
 
         binding.goalTimeDebt.text = String.format(getString(R.string.hours_placeholder), roundDouble(getTimeDebt(goal), 10))
@@ -83,8 +83,6 @@ class GoalActivity: AppCompatActivity() {
                 val date = calendarFromDatePicker(popupBinding.sessionDatePicker)
                 val session = GoalSession(-1, date, time, goal.ID)
                 sessionDatabaseService.addSession(session)
-                goal.currentTimeAmount += popupBinding.valueInput.text.toString().toDouble()
-                dbService.updateGoalByID(goal.ID, goal)
                 updateViews(goal)
             }
         }
@@ -110,7 +108,7 @@ class GoalActivity: AppCompatActivity() {
     }
 
     private fun updateViews(goal: TimeGoal){
-        binding.currentTimeAmount.text = String.format(getString(R.string.goal_time_amount_placeholder), roundDouble(goal.currentTimeAmount, 10))
+        binding.currentTimeAmount.text = String.format(getString(R.string.goal_time_amount_placeholder), roundDouble(goal.getCurrentTimeAmount(this), 10))
         var timeLeftInSeconds = (goal.deadline.timeInMillis - Calendar.getInstance().timeInMillis)/1000
         val daysLeft = floor(timeLeftInSeconds / SECONDS_IN_DAY).toLong()
         timeLeftInSeconds -= (daysLeft * com.example.goaltracker.SECONDS_IN_DAY).toLong()
@@ -121,7 +119,7 @@ class GoalActivity: AppCompatActivity() {
 
         binding.goalPercentageCompleted.text = String.format(
             getString(R.string.goal_percentage_completed_placeholder),
-            roundDouble((goal.currentTimeAmount/goal.goalTimeAmount)*100, 10)
+            roundDouble((goal.getCurrentTimeAmount(this)/goal.goalTimeAmount)*100, 10)
         )
 
         binding.goalTimeDebt.text = String.format(getString(R.string.hours_placeholder), roundDouble(getTimeDebt(goal), 10))

@@ -16,14 +16,13 @@ object GoalDatabaseConstants {
             "${BaseColumns._ID} INTEGER PRIMARY KEY AUTOINCREMENT," +
             "${TimeGoalTable.GOAL_NAME} TEXT NOT NULL," +
             "${TimeGoalTable.START_TIME} INTEGER NOT NULL," +
-            "${TimeGoalTable.GOAL_TIME_AMOUNT} INTEGER NOT NULL," +
-            "${TimeGoalTable.CURRENT_TIME_AMOUNT} INTEGER," +
+            "${TimeGoalTable.GOAL_TIME_AMOUNT} REAL NOT NULL," +
             "${TimeGoalTable.DEADLINE} INTEGER NOT NULL)"
     const val CREATE_SESSION_TABLE_QUERY = "CREATE TABLE ${SessionTable.TABLE_NAME} (" +
             "${BaseColumns._ID} INTEGER PRIMARY KEY AUTOINCREMENT," +
             "${SessionTable.SESSION_DATE} INTEGER NOT NULL," +
             "${SessionTable.GOAL_ID} INTEGER NOT NULL," +
-            "${SessionTable.TIME_AMOUNT} INTEGER NOT NULL)"
+            "${SessionTable.TIME_AMOUNT} REAL NOT NULL)"
 
     object CountdownGoalTable: BaseColumns{
         const val TABLE_NAME = "CountdownGoals"
@@ -35,7 +34,6 @@ object GoalDatabaseConstants {
         const val TABLE_NAME = "TimeGoals"
         const val GOAL_NAME = "goalName"
         const val GOAL_TIME_AMOUNT = "goalTimeAmount"
-        const val CURRENT_TIME_AMOUNT = "currentTimeAmount"
         const val START_TIME = "startTime"
         const val DEADLINE = "deadline"
     }

@@ -52,13 +52,13 @@ class SessionDatabaseService(context: Context): GoalDatabase(context) {
             while(moveToNext()) {
                 val goalID = getLong(getColumnIndexOrThrow(GOAL_ID))
                 val sessionID = getLong(getColumnIndexOrThrow(BaseColumns._ID))
-                val timeAmount = getLong(getColumnIndexOrThrow(TIME_AMOUNT))
+                val timeAmount = getDouble(getColumnIndexOrThrow(TIME_AMOUNT))
                 val date = getLong(getColumnIndexOrThrow(SESSION_DATE))
 
                 return DataGoalSession(
                     sessionID,
-                    timeAmount,
                     date,
+                    timeAmount,
                     goalID
                 )
             }
@@ -120,7 +120,7 @@ class SessionDatabaseService(context: Context): GoalDatabase(context) {
         with(cursor){
             while(moveToNext()) {
                 val sessionID = getLong(getColumnIndexOrThrow(BaseColumns._ID))
-                val timeAmount = getLong(getColumnIndexOrThrow(TIME_AMOUNT))
+                val timeAmount = getDouble(getColumnIndexOrThrow(TIME_AMOUNT))
                 val date = getLong(getColumnIndexOrThrow(SESSION_DATE))
 
                 val goalSession = GoalSession(DataGoalSession(
@@ -135,4 +135,27 @@ class SessionDatabaseService(context: Context): GoalDatabase(context) {
         return sessionList
     }
 
+    fun getCurrentTimeForGoal(goalID: Long): Double{
+        val db = this.readableDatabase
+
+        val projection = arrayOf("SUM(${TIME_AMOUNT}) as SUMA")
+
+        val selection = "$GOAL_ID = ?"
+        val selectionArgs = arrayOf(goalID.toString())
+
+        val cursor = db.query(TABLE_NAME,
+            projection,
+            selection,
+            selectionArgs,
+            null,
+            null,
+            null)
+
+        with(cursor){
+            while(moveToNext()){
+                return getDouble(getColumnIndexOrThrow("SUMA"))
+            }
+        }
+        return 0.0
+    }
 }

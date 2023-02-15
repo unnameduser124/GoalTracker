@@ -1,13 +1,14 @@
 package com.example.goaltracker.goal
 
+import android.content.Context
 import com.example.goaltracker.dataClasses.DataTimeGoal
+import com.example.goaltracker.database.SessionDatabaseService
 import java.util.Calendar
 
 class TimeGoal(
     val ID: Long,
     var name: String,
     var goalTimeAmount: Double,
-    var currentTimeAmount: Double,
     val startTime: Calendar,
     var deadline: Calendar,
     var goalSessions: MutableList<GoalSession> = mutableListOf(),
@@ -16,14 +17,12 @@ class TimeGoal(
     constructor(data: DataTimeGoal): this(data.goalID,
         data.goalName,
         -1.0,
-        0.0,
         Calendar.getInstance(),
         Calendar.getInstance(),
         mutableListOf()){
         startTime.timeInMillis = data.startTime * 1000
         deadline.timeInMillis = data.deadline * 1000
-        goalTimeAmount = data.goalTimeAmount/3600.0
-        currentTimeAmount = data.currentTimeAmount/3600.0
+        goalTimeAmount = data.goalTimeAmount
     }
 
     init {
@@ -43,6 +42,16 @@ class TimeGoal(
         return goalSessions.filter {
             it.date.get(Calendar.YEAR) == year.get(Calendar.MONTH)
         }
+    }
+
+    fun getCurrentTimeAmount(context: Context): Double{
+        val dbService = SessionDatabaseService(context)
+        return dbService.getCurrentTimeForGoal(ID)
+    }
+
+    fun loadSessions(context: Context){
+        val dbService = SessionDatabaseService(context)
+        goalSessions = dbService.getSessionsForGoal(ID)
     }
 
 }

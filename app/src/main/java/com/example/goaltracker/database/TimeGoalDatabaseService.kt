@@ -23,7 +23,6 @@ class TimeGoalDatabaseService(context: Context): GoalDatabase(context){
             put(START_TIME, goal.startTime)
             put(DEADLINE, goal.deadline)
             put(GOAL_TIME_AMOUNT, goal.goalTimeAmount)
-            put(CURRENT_TIME_AMOUNT, goal.currentTimeAmount)
         }
 
         this.writableDatabase.insert(TABLE_NAME, null, contentValues)
@@ -58,8 +57,7 @@ class TimeGoalDatabaseService(context: Context): GoalDatabase(context){
             while(moveToNext()) {
                 val goalID = getLong(getColumnIndexOrThrow(BaseColumns._ID))
                 val goalName = getString(getColumnIndexOrThrow(GOAL_NAME))
-                val goalTimeAmount = getLong(getColumnIndexOrThrow(GOAL_TIME_AMOUNT))
-                val currentTimeAmount = getLong(getColumnIndexOrThrow(CURRENT_TIME_AMOUNT))
+                val goalTimeAmount = getDouble(getColumnIndexOrThrow(GOAL_TIME_AMOUNT))
                 val startTime = getLong(getColumnIndexOrThrow(START_TIME))
                 val deadline = getLong(getColumnIndexOrThrow(DEADLINE))
 
@@ -67,7 +65,6 @@ class TimeGoalDatabaseService(context: Context): GoalDatabase(context){
                     goalID,
                     goalName,
                     goalTimeAmount,
-                    currentTimeAmount,
                     startTime,
                     deadline
                 )
@@ -83,7 +80,6 @@ class TimeGoalDatabaseService(context: Context): GoalDatabase(context){
 
         val contentValues = ContentValues().apply{
             put(GOAL_TIME_AMOUNT, dataGoal.goalTimeAmount)
-            put(CURRENT_TIME_AMOUNT, dataGoal.currentTimeAmount)
             put(START_TIME, dataGoal.startTime)
             put(DEADLINE, dataGoal.deadline)
             put(GOAL_NAME, dataGoal.goalName)
@@ -130,11 +126,12 @@ class TimeGoalDatabaseService(context: Context): GoalDatabase(context){
                 val id = getLong(getColumnIndexOrThrow(BaseColumns._ID))
                 val goalName = getString(getColumnIndexOrThrow(GOAL_NAME))
 
-                val dataGoal = DataTimeGoal(id, goalName, 0, 0, 0, 0)
+                val dataGoal = DataTimeGoal(id, goalName, 0.0, 0, 0)
                 goalList.add(TimeGoal(dataGoal))
             }
         }
 
         return goalList
     }
+
 }

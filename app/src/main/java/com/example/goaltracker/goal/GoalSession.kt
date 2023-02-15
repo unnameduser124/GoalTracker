@@ -10,6 +10,6 @@ class GoalSession(val ID: Long,
     constructor(data: DataGoalSession): this(data.sessionID, Calendar.getInstance(), -1.0, data.goalID){
         println(data.timeAmount)
         date.timeInMillis = data.date
-        timeAmount = data.timeAmount/3600.0
+        timeAmount = data.timeAmount
     }
 }
