@@ -5,7 +5,7 @@ import android.content.Context
 import android.provider.BaseColumns
 import androidx.core.content.contentValuesOf
 import com.example.goaltracker.dataClasses.DataTimeGoal
-import com.example.goaltracker.database.GoalDatabaseConstants.TimeGoalTable.CURRENT_TIME_AMOUNT
+import com.example.goaltracker.database.GoalDatabaseConstants.TimeGoalTable
 import com.example.goaltracker.database.GoalDatabaseConstants.TimeGoalTable.DEADLINE
 import com.example.goaltracker.goal.TimeGoal
 import com.example.goaltracker.database.GoalDatabaseConstants.TimeGoalTable.GOAL_NAME
@@ -35,7 +35,6 @@ class TimeGoalDatabaseService(context: Context): GoalDatabase(context){
             BaseColumns._ID,
             GOAL_NAME,
             GOAL_TIME_AMOUNT,
-            CURRENT_TIME_AMOUNT,
             START_TIME,
             DEADLINE
         )

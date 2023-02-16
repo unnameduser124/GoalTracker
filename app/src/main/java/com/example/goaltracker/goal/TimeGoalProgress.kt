@@ -1,5 +1,6 @@
 package com.example.goaltracker.goal
 
+import android.content.Context
 import java.util.*
 import kotlin.math.floor
 
@@ -37,38 +38,38 @@ fun getInitialExpectedYearlyAverage(goal: TimeGoal): Double{
     return goal.goalTimeAmount / getTimeDifferenceInYears(goal.startTime, goal.deadline)
 }
 
-fun getCurrentExpectedDailyAverageTime(goal: TimeGoal): Double{
-    val goalTimeLeft = goal.goalTimeAmount - goal.currentTimeAmount
+fun getCurrentExpectedDailyAverageTime(goal: TimeGoal, context: Context): Double{
+    val goalTimeLeft = goal.goalTimeAmount - goal.getCurrentTimeAmount(context)
     val timeLeft = getTimeDifferenceInDays(Calendar.getInstance(), goal.deadline)
     return goalTimeLeft/timeLeft
 }
 
-fun getCurrentExpectedMonthlyAverageTime(goal: TimeGoal): Double{
-    val goalTimeLeft = goal.goalTimeAmount - goal.currentTimeAmount
+fun getCurrentExpectedMonthlyAverageTime(goal: TimeGoal, context: Context): Double{
+    val goalTimeLeft = goal.goalTimeAmount - goal.getCurrentTimeAmount(context)
     val timeLeft = getTimeDifferenceInMonths(Calendar.getInstance(), goal.deadline)
     return goalTimeLeft/timeLeft
 }
 
-fun getCurrentExpectedYearlyAverageTime(goal: TimeGoal): Double{
-    val goalTimeLeft = goal.goalTimeAmount - goal.currentTimeAmount
+fun getCurrentExpectedYearlyAverageTime(goal: TimeGoal, context: Context): Double{
+    val goalTimeLeft = goal.goalTimeAmount - goal.getCurrentTimeAmount(context)
     val timeLeft = getTimeDifferenceInYears(Calendar.getInstance(), goal.deadline)
     return goalTimeLeft/timeLeft
 }
 
-fun getRealDailyAverageTime(goal: TimeGoal): Double{
-    return goal.currentTimeAmount / getTimeDifferenceInDays(goal.startTime, Calendar.getInstance())
+fun getRealDailyAverageTime(goal: TimeGoal, context: Context): Double{
+    return goal.getCurrentTimeAmount(context) / getTimeDifferenceInDays(goal.startTime, Calendar.getInstance())
 }
-fun getRealMonthlyAverageTime(goal: TimeGoal): Double{
-    return goal.currentTimeAmount / getTimeDifferenceInMonths(goal.startTime, Calendar.getInstance())
+fun getRealMonthlyAverageTime(goal: TimeGoal, context: Context): Double{
+    return goal.getCurrentTimeAmount(context) / getTimeDifferenceInMonths(goal.startTime, Calendar.getInstance())
 }
-fun getRealYearlyAverageTime(goal: TimeGoal): Double{
-    return goal.currentTimeAmount / getTimeDifferenceInYears(goal.startTime, Calendar.getInstance())
+fun getRealYearlyAverageTime(goal: TimeGoal, context: Context): Double{
+    return goal.getCurrentTimeAmount(context) / getTimeDifferenceInYears(goal.startTime, Calendar.getInstance())
 }
 
-fun getTimeDebt(goal: TimeGoal): Double{
+fun getTimeDebt(goal: TimeGoal, context: Context): Double{
     val currentTime = Calendar.getInstance()
     if(currentTime.timeInMillis >= goal.deadline.timeInMillis){
-        return goal.goalTimeAmount - goal.currentTimeAmount
+        return goal.goalTimeAmount - goal.getCurrentTimeAmount(context)
     }
 
     val timePassed= getTimeDifferenceInDays(goal.startTime, currentTime) + 1
@@ -76,27 +77,27 @@ fun getTimeDebt(goal: TimeGoal): Double{
 
     val expectedTimeAmount = timePassed * expectedDaily
 
-    return expectedTimeAmount - goal.currentTimeAmount
+    return expectedTimeAmount - goal.getCurrentTimeAmount(context)
 }
 
-fun getTotalProgressPercentage(goal: TimeGoal): Double{
-    return goal.currentTimeAmount/goal.goalTimeAmount
+fun getTotalProgressPercentage(goal: TimeGoal, context: Context): Double{
+    return goal.getCurrentTimeAmount(context)/goal.goalTimeAmount
 }
-fun getMonthlyProgressPercentage(goal: TimeGoal, month: Calendar): Double{
+fun getMonthlyProgressPercentage(goal: TimeGoal, month: Calendar, context: Context): Double{
     val entries = goal.getEntriesForMonth(month)
     var currentMonthTime = 0.0
     entries.forEach{
         currentMonthTime+=it.timeAmount
     }
 
-    return getCurrentExpectedMonthlyAverageTime(goal)/currentMonthTime
+    return getCurrentExpectedMonthlyAverageTime(goal, context)/currentMonthTime
 }
-fun getYearlyProgressPercentage(goal: TimeGoal, year: Calendar): Double{
+fun getYearlyProgressPercentage(goal: TimeGoal, year: Calendar, context: Context): Double{
     val entries = goal.getEntriesForYear(year)
     var currentYearTime = 0.0
     entries.forEach{
         currentYearTime+=it.timeAmount
     }
 
-    return getCurrentExpectedYearlyAverageTime(goal)/currentYearTime
+    return getCurrentExpectedYearlyAverageTime(goal, context)/currentYearTime
 }

@@ -11,10 +11,10 @@ private val TAB_TITLES = arrayOf(
 
 class SectionAdapterMain(fragmentManager: FragmentManager): FragmentPagerAdapter(fragmentManager){
     override fun getItem(position: Int): Fragment {
-        return if(position==1){
+        return if(position==0){
             HomePlaceholderFragment.newInstance(position)
         } else{
-            HomePlaceholderFragment.newInstance(position)
+            GlobalStatsPlaceholderFragment.newInstance(position)
         }
     }
 

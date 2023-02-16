@@ -6,6 +6,8 @@ import android.view.Gravity
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.DatePicker
 import android.widget.PopupWindow
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.example.goaltracker.*
 import com.example.goaltracker.database.SessionDatabaseService
@@ -66,7 +68,7 @@ class GoalActivity: AppCompatActivity() {
             roundDouble((goal.getCurrentTimeAmount(this)/goal.goalTimeAmount)*100, 10)
         )
 
-        binding.goalTimeDebt.text = String.format(getString(R.string.hours_placeholder), roundDouble(getTimeDebt(goal), 10))
+        binding.goalTimeDebt.text = String.format(getString(R.string.hours_placeholder), roundDouble(getTimeDebt(goal, this), 10))
 
         binding.addSessionButton.setOnClickListener{
             val popupBinding = AddSessionPopupBinding.inflate(layoutInflater)
@@ -79,19 +81,34 @@ class GoalActivity: AppCompatActivity() {
             popupWindow.contentView = popupBinding.root
 
             popupBinding.sessionConfirmButton.setOnClickListener {
-                val time = popupBinding.valueInput.text.toString().toDouble() * 3600
-                val date = calendarFromDatePicker(popupBinding.sessionDatePicker)
-                val session = GoalSession(-1, date, time, goal.ID)
-                sessionDatabaseService.addSession(session)
-                updateViews(goal)
+                if(popupBinding.valueInput.text.toString()!="" 
+                    && popupBinding.valueInput.text.toString().toDouble()!=0.0){
+                    val time = popupBinding.valueInput.text.toString().toDouble()
+                    val date = clearHoursAndMinutes(calendarFromDatePicker(popupBinding.sessionDatePicker))
+                    val session = GoalSession(-1, date, time, goal.ID)
+                    sessionDatabaseService.addSession(session)
+                    updateViews(goal)
+                }
+                else{
+                    Toast.makeText(this, "Duration cannot be 0!", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
         binding.sessionsButton.setOnClickListener {
             val intent = Intent(this, GoalSessionListActivity::class.java)
             intent.putExtra("GOAL_ID", goal.ID)
+            finish()
             startActivity(intent)
         }
+
+        onBackPressedDispatcher.addCallback(this , object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val intent = Intent(binding.sessionsButton.context, MainActivity::class.java)
+                finishAffinity()
+                startActivity(intent)
+            }
+        })
 
     }
 
@@ -108,7 +125,7 @@ class GoalActivity: AppCompatActivity() {
     }
 
     private fun updateViews(goal: TimeGoal){
-        binding.currentTimeAmount.text = String.format(getString(R.string.goal_time_amount_placeholder), roundDouble(goal.getCurrentTimeAmount(this), 10))
+        binding.currentTimeAmount.text = String.format(getString(R.string.goal_time_amount_placeholder), roundDouble(goal.getCurrentTimeAmount(this), HOURS_ROUND_MULTIPLIER))
         var timeLeftInSeconds = (goal.deadline.timeInMillis - Calendar.getInstance().timeInMillis)/1000
         val daysLeft = floor(timeLeftInSeconds / SECONDS_IN_DAY).toLong()
         timeLeftInSeconds -= (daysLeft * com.example.goaltracker.SECONDS_IN_DAY).toLong()
@@ -119,9 +136,18 @@ class GoalActivity: AppCompatActivity() {
 
         binding.goalPercentageCompleted.text = String.format(
             getString(R.string.goal_percentage_completed_placeholder),
-            roundDouble((goal.getCurrentTimeAmount(this)/goal.goalTimeAmount)*100, 10)
+            roundDouble((goal.getCurrentTimeAmount(this)/goal.goalTimeAmount)*100, PERCENTAGE_ROUND_MULTIPLIER)
         )
 
-        binding.goalTimeDebt.text = String.format(getString(R.string.hours_placeholder), roundDouble(getTimeDebt(goal), 10))
+        binding.goalTimeDebt.text = String.format(getString(R.string.hours_placeholder), roundDouble(getTimeDebt(goal, this), HOURS_ROUND_MULTIPLIER))
+    }
+
+
+    private fun clearHoursAndMinutes(calendar: Calendar): Calendar{
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        return calendar
     }
 }

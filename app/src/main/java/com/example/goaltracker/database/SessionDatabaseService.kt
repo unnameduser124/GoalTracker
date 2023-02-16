@@ -158,4 +158,41 @@ class SessionDatabaseService(context: Context): GoalDatabase(context) {
         }
         return 0.0
     }
+
+    fun getTotalTime(): Double{
+        TODO("Not implemented yet")
+    }
+    fun getMostTimeInDay(): Double{
+        TODO("Not implemented yet")
+    }
+    fun getGoalWithMostTime(): Double{
+        TODO("Not implemented yet")
+    }
+    fun getLongestActiveGoal(): Double{
+        TODO("Not implemented yet")
+    }
+    fun getAverageTimePerGoal(): Double{
+        TODO("Not implemented yet")
+    }
+    fun getAverageTimePerDay(): Double{
+        TODO("Not implemented yet")
+    }
+    fun getAverageTimePerWeek(): Double{
+        TODO("Not implemented yet")
+    }
+    fun getAverageTimePerMonth(): Double{
+        TODO("Not implemented yet")
+    }
+    fun getAverageTimePerYear(): Double{
+        TODO("Not implemented yet")
+    }
+    fun getTimeWithinLastWeek(): Double{
+        TODO("Not implemented yet")
+    }
+    fun getTimeThisMonth(): Double{
+        TODO("Not implemented yet")
+    }
+    fun getTimeThisYear(): Double{
+        TODO("Not implemented yet")
+    }
 }

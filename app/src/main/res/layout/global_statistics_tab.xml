@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- ADD LABELS -->
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/global_stats_total_time"
+        app:layout_constraintEnd_toEndOf="@id/global_stats_total_time"
+        app:layout_constraintBottom_toTopOf="@id/global_stats_total_time"
+        android:text = "@string/total_time_label"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id = "@+id/global_stats_total_time"
+        app:layout_constraintTop_toTopOf = "parent"
+        tools:text = "1000h"
+        android:textAlignment="center"
+        android:textSize="35sp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="50dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/global_stats_most_time_in_day"
+        app:layout_constraintEnd_toEndOf="@id/global_stats_most_time_in_day"
+        app:layout_constraintBottom_toTopOf="@id/global_stats_most_time_in_day"
+        android:text = "@string/most_time_in_a_day_label"/>
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id = "@+id/global_stats_most_time_in_day"
+        app:layout_constraintTop_toBottomOf="@id/global_stats_total_time"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/global_stats_goal_with_most_time"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        tools:text = "6.25h"
+        android:textSize="25sp"
+        android:textAlignment="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/global_stats_goal_with_most_time"
+        app:layout_constraintEnd_toEndOf="@id/global_stats_goal_with_most_time"
+        app:layout_constraintBottom_toTopOf="@id/global_stats_goal_with_most_time"
+        android:text = "@string/goal_with_most_time_label"/>
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id = "@+id/global_stats_goal_with_most_time"
+        app:layout_constraintStart_toEndOf="@id/global_stats_most_time_in_day"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/global_stats_total_time"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        tools:text = "programming"
+        android:textSize="25sp"
+        android:textAlignment="center"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/global_stats_longest_goal"
+        app:layout_constraintEnd_toEndOf="@id/global_stats_longest_goal"
+        app:layout_constraintBottom_toTopOf="@id/global_stats_longest_goal"
+        android:text = "@string/longest_active_goal_label"/>
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id = "@+id/global_stats_longest_goal"
+        app:layout_constraintTop_toBottomOf="@id/global_stats_most_time_in_day"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/global_stats_avg_time_per_goal"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        tools:text = "reading"
+        android:textSize="25sp"
+        android:textAlignment="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/global_stats_avg_time_per_goal"
+        app:layout_constraintEnd_toEndOf="@id/global_stats_avg_time_per_goal"
+        app:layout_constraintBottom_toTopOf="@id/global_stats_avg_time_per_goal"
+        android:text = "@string/avg_time_per_goal_label"/>
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id = "@+id/global_stats_avg_time_per_goal"
+        app:layout_constraintStart_toEndOf="@id/global_stats_longest_goal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/global_stats_most_time_in_day"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        tools:text = "100.43h"
+        android:textSize="25sp"
+        android:textAlignment="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/global_stats_avg_time_per_day"
+        app:layout_constraintEnd_toEndOf="@id/global_stats_avg_time_per_day"
+        app:layout_constraintBottom_toTopOf="@id/global_stats_avg_time_per_day"
+        android:text = "@string/average_time_per_day_label"/>
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id = "@+id/global_stats_avg_time_per_day"
+        app:layout_constraintTop_toBottomOf="@id/global_stats_longest_goal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/global_stats_avg_time_per_week"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        tools:text = "3.17h"
+        android:textSize="25sp"
+        android:textAlignment="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/global_stats_avg_time_per_week"
+        app:layout_constraintEnd_toEndOf="@id/global_stats_avg_time_per_week"
+        app:layout_constraintBottom_toTopOf="@id/global_stats_avg_time_per_week"
+        android:text = "@string/average_time_per_week_label"/>
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id = "@+id/global_stats_avg_time_per_week"
+        app:layout_constraintStart_toEndOf="@id/global_stats_avg_time_per_day"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/global_stats_avg_time_per_goal"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        tools:text = "22.19h"
+        android:textSize="25sp"
+        android:textAlignment="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/global_stats_avg_time_per_month"
+        app:layout_constraintEnd_toEndOf="@id/global_stats_avg_time_per_month"
+        app:layout_constraintBottom_toTopOf="@id/global_stats_avg_time_per_month"
+        android:text = "@string/average_time_per_month_label"/>
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id = "@+id/global_stats_avg_time_per_month"
+        app:layout_constraintTop_toBottomOf="@id/global_stats_avg_time_per_day"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/global_stats_avg_time_per_year"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        tools:text = "3.17h"
+        android:textSize="25sp"
+        android:textAlignment="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/global_stats_avg_time_per_year"
+        app:layout_constraintEnd_toEndOf="@id/global_stats_avg_time_per_year"
+        app:layout_constraintBottom_toTopOf="@id/global_stats_avg_time_per_year"
+        android:text = "@string/average_time_per_year_label"/>
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id = "@+id/global_stats_avg_time_per_year"
+        app:layout_constraintStart_toEndOf="@id/global_stats_avg_time_per_month"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/global_stats_avg_time_per_week"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        tools:text = "22.19h"
+        android:textSize="25sp"
+        android:textAlignment="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/global_stats_time_within_last_week"
+        app:layout_constraintEnd_toEndOf="@id/global_stats_time_within_last_week"
+        app:layout_constraintBottom_toTopOf="@id/global_stats_time_within_last_week"
+        android:text = "@string/time_within_last_week_label"/>
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id = "@+id/global_stats_time_within_last_week"
+        app:layout_constraintTop_toBottomOf="@id/global_stats_avg_time_per_month"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/global_stats_time_this_month"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        tools:text = "3.17h"
+        android:textSize="25sp"
+        android:textAlignment="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/global_stats_time_this_month"
+        app:layout_constraintEnd_toEndOf="@id/global_stats_time_this_month"
+        app:layout_constraintBottom_toTopOf="@id/global_stats_time_this_month"
+        android:text = "@string/time_within_last_month_label"/>
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id = "@+id/global_stats_time_this_month"
+        app:layout_constraintStart_toEndOf="@id/global_stats_time_within_last_week"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/global_stats_avg_time_per_year"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        tools:text = "22.19h"
+        android:textSize="25sp"
+        android:textAlignment="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/global_stats_time_this_year"
+        app:layout_constraintEnd_toEndOf="@id/global_stats_time_this_year"
+        app:layout_constraintBottom_toTopOf="@id/global_stats_time_this_year"
+        android:text = "@string/time_this_year_label"/>
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id = "@+id/global_stats_time_this_year"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/global_stats_time_this_month"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="10dp"
+        tools:text = "22.19h"
+        android:textSize="25sp"
+        android:textAlignment="center"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

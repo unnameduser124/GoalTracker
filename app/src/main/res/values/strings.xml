@@ -8,7 +8,7 @@
     <string name="goal_percentage_completed_label">% completed</string>
     <string name="value_input_hint">value</string>
     <string name="goal_name_input_hint">name</string>
-    <string name="goal_time_amount_input_hint">time in hours</string>
+    <string name="goal_time_amount_input_hint">duration in hours</string>
     <string name="add_button_label">add</string>
     <string name="add_goal_appbar_label">Add goal</string>
     <string name="main_activity_appbar_label">Goal Tracker</string>
@@ -24,4 +24,17 @@
     <string name="time_in_hours_label">time in hours</string>
     <string name="add_session_label">Add session</string>
     <string name="sessions_appbar_label">Sessions</string>
+
+    <string name="total_time_label">total time</string>
+    <string name="most_time_in_a_day_label">most in a day</string>
+    <string name="longest_active_goal_label">longest goal</string>
+    <string name="goal_with_most_time_label">goal with most time</string>
+    <string name="avg_time_per_goal_label">average per goal</string>
+    <string name="average_time_per_day_label">average per day</string>
+    <string name="average_time_per_week_label">average per week</string>
+    <string name="average_time_per_year_label">average per year</string>
+    <string name="average_time_per_month_label">average per month</string>
+    <string name="time_within_last_week_label">within last 7 days</string>
+    <string name="time_within_last_month_label">this month</string>
+    <string name="time_this_year_label">this year</string>
 </resources>

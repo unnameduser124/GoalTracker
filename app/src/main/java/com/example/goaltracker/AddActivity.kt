@@ -46,7 +46,7 @@ class AddActivity: AppCompatActivity() {
         var deadline = calendarFromDatePicker(binding.addGoalDeadlineDate)
         deadline = clearHoursAndMinutes(deadline)
 
-        return TimeGoal(-1, name, timeAmount, 0.0, startTime, deadline)
+        return TimeGoal(-1, name, timeAmount, startTime, deadline)
     }
     
     private fun checkFieldInput(): Boolean{
@@ -71,6 +71,7 @@ class AddActivity: AppCompatActivity() {
         calendar.set(Calendar.HOUR_OF_DAY, 0)
         calendar.set(Calendar.MINUTE, 0)
         calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
         return calendar
     }
 }

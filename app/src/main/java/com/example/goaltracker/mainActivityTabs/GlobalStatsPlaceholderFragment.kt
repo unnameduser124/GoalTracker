@@ -1,0 +1,89 @@
+package com.example.goaltracker.mainActivityTabs
+
+import android.content.Context
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.example.goaltracker.HOURS_ROUND_MULTIPLIER
+import com.example.goaltracker.R
+import com.example.goaltracker.database.StatsDatabaseService
+import com.example.goaltracker.database.TimeGoalDatabaseService
+import com.example.goaltracker.databinding.GlobalStatisticsTabBinding
+import com.example.goaltracker.roundDouble
+
+class GlobalStatsPlaceholderFragment: Fragment() {
+    private lateinit var pageViewModel: PageViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        pageViewModel = ViewModelProvider(this).get(PageViewModel::class.java).apply {
+            setIndex(arguments?.getInt(GlobalStatsPlaceholderFragment.SECTION_NUMBER) ?: 1)
+        }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val binding = GlobalStatisticsTabBinding.inflate(layoutInflater)
+        val dbService = StatsDatabaseService(requireContext())
+        val totalTime = roundDouble(dbService.getTotalTime(), HOURS_ROUND_MULTIPLIER)
+        binding.globalStatsTotalTime.text = String.format(
+            requireContext().getString(R.string.hours_placeholder),
+            totalTime
+        )
+
+        val mostTimeInDay = roundDouble(dbService.getMostTimeInDay(), HOURS_ROUND_MULTIPLIER)
+        binding.globalStatsMostTimeInDay.text = String.format(
+            requireContext().getString(R.string.hours_placeholder),
+            mostTimeInDay
+        )
+
+        var goalID = dbService.getGoalWithMostTime()
+        binding.globalStatsGoalWithMostTime.text = goalName(goalID)
+
+        goalID = dbService.getLongestActiveGoal()
+        binding.globalStatsLongestGoal.text = goalName(goalID)
+
+        val averageTimePerGoal = roundDouble(dbService.getAverageTimePerGoal(), HOURS_ROUND_MULTIPLIER)
+        binding.globalStatsAvgTimePerGoal.text = String.format(
+            requireContext().getString(R.string.hours_placeholder),
+            averageTimePerGoal
+        )
+
+        val averageTimePerDay = roundDouble(dbService.getAverageTimePerDay(), HOURS_ROUND_MULTIPLIER)
+        binding.globalStatsAvgTimePerGoal.text = String.format(
+            requireContext().getString(R.string.hours_placeholder),
+            averageTimePerDay
+        )
+
+        return binding.root
+    }
+    companion object{
+
+        private const val SECTION_NUMBER = "section number"
+
+        @JvmStatic
+        fun newInstance(sectionNumber: Int): GlobalStatsPlaceholderFragment {
+            return GlobalStatsPlaceholderFragment().apply{
+                arguments = Bundle().apply{
+                    putInt(SECTION_NUMBER, sectionNumber)
+                }
+            }
+        }
+    }
+
+    fun goalName(goalID: Long): String{
+        val dbService = TimeGoalDatabaseService(requireContext())
+        val goal = dbService.getGoalByID(goalID)
+        return if(goal?.goalName!=null){
+            goal.goalName
+        } else{
+            "no data"
+        }
+    }
+}
