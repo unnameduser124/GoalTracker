@@ -56,9 +56,27 @@ class GlobalStatsPlaceholderFragment: Fragment() {
         )
 
         val averageTimePerDay = roundDouble(dbService.getAverageTimePerDay(), HOURS_ROUND_MULTIPLIER)
-        binding.globalStatsAvgTimePerGoal.text = String.format(
+        binding.globalStatsAvgTimePerDay.text = String.format(
             requireContext().getString(R.string.hours_placeholder),
             averageTimePerDay
+        )
+
+        val averageTimePerWeek = roundDouble(dbService.getAverageTimePerWeek(), HOURS_ROUND_MULTIPLIER)
+        binding.globalStatsAvgTimePerWeek.text = String.format(
+            requireContext().getString(R.string.hours_placeholder),
+            averageTimePerWeek
+        )
+
+        val averageTimePerMonth = roundDouble(dbService.getAverageTimePerMonth(), HOURS_ROUND_MULTIPLIER)
+        binding.globalStatsAvgTimePerMonth.text = String.format(
+            requireContext().getString(R.string.hours_placeholder),
+            averageTimePerMonth
+        )
+
+        val averageTimePerYear = roundDouble(dbService.getAverageTimePerYear(), HOURS_ROUND_MULTIPLIER)
+        binding.globalStatsAvgTimePerYear.text = String.format(
+            requireContext().getString(R.string.hours_placeholder),
+            averageTimePerYear
         )
 
         return binding.root
