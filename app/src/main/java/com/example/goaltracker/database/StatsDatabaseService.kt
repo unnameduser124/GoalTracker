@@ -134,7 +134,6 @@ class StatsDatabaseService(context: Context): GoalDatabase(context) {
         val dayDifference = "(MAX(${GoalDatabaseConstants.SessionTable.SESSION_DATE}) - MIN(${GoalDatabaseConstants.SessionTable.SESSION_DATE})) / ($MILLIS_IN_DAY) + 1"
         val projection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) / CAST($dayDifference as REAL) as $columnName")
 
-        println(projection[0])
         val cursor = db.query(
             GoalDatabaseConstants.SessionTable.TABLE_NAME,
             projection,
@@ -210,14 +209,13 @@ class StatsDatabaseService(context: Context): GoalDatabase(context) {
 
                 val yearDifference = lastDateCalendar.get(Calendar.YEAR) - firstDateCalendar.get(Calendar.YEAR)
                 if(yearDifference == 0){
-                    monthDifference = lastDateCalendar.get(Calendar.MONTH) - firstDateCalendar.get(Calendar.MONTH)
+                    monthDifference = lastDateCalendar.get(Calendar.MONTH) - firstDateCalendar.get(Calendar.MONTH) + 1
                 }
                 else{
                     monthDifference = MONTHS_IN_YEAR * (yearDifference - 1)
                     monthDifference += MONTHS_IN_YEAR - (firstDateCalendar.get(Calendar.MONTH) - 1)
                     monthDifference += lastDateCalendar.get(Calendar.MONTH)
                 }
-                println(monthDifference)
             }
         }
 
@@ -290,12 +288,111 @@ class StatsDatabaseService(context: Context): GoalDatabase(context) {
         return 0.0
     }
     fun getTimeWithinLastWeek(): Double{
-        TODO("Not implemented yet")
+        val db = this.readableDatabase
+        val resultColumn = "SUMA"
+
+        val currentDate = clearHoursAndMinutes(Calendar.getInstance())
+        val sevenDaysAgo = clearHoursAndMinutes(Calendar.getInstance())
+        sevenDaysAgo.timeInMillis -= MILLIS_IN_DAY.toLong() * (DAYS_IN_WEEK.toLong() - 1)
+
+        val moreThan = sevenDaysAgo.timeInMillis
+        val lessThan = currentDate.timeInMillis
+
+        val projection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) as $resultColumn")
+        val selection = "${GoalDatabaseConstants.SessionTable.SESSION_DATE} >= ? AND ${GoalDatabaseConstants.SessionTable.SESSION_DATE} <= ?"
+        val selectionArgs = arrayOf(moreThan.toString(), lessThan.toString())
+
+        val cursor = db.query(
+            GoalDatabaseConstants.SessionTable.TABLE_NAME,
+            projection,
+            selection,
+            selectionArgs,
+            null,
+            null,
+            null
+        )
+
+        with(cursor){
+            while(moveToNext()){
+                return getDouble(getColumnIndexOrThrow(resultColumn))
+            }
+        }
+
+        return 0.0
     }
     fun getTimeThisMonth(): Double{
-        TODO("Not implemented yet")
+        val db = this.readableDatabase
+        val resultColumn = "SUMA"
+
+        val monthStart = clearHoursAndMinutes(Calendar.getInstance())
+        monthStart.set(Calendar.DAY_OF_MONTH, monthStart.getActualMinimum(Calendar.DAY_OF_MONTH))
+        val monthEnd = clearHoursAndMinutes(Calendar.getInstance())
+        monthEnd.set(Calendar.DAY_OF_MONTH, monthEnd.getActualMaximum(Calendar.DAY_OF_MONTH))
+
+        val moreThan = monthStart.timeInMillis
+        val lessThan = monthEnd.timeInMillis
+
+        val projection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) as $resultColumn")
+        val selection = "${GoalDatabaseConstants.SessionTable.SESSION_DATE} >= ? AND ${GoalDatabaseConstants.SessionTable.SESSION_DATE} <= ?"
+        val selectionArgs = arrayOf(moreThan.toString(), lessThan.toString())
+
+        val cursor = db.query(
+            GoalDatabaseConstants.SessionTable.TABLE_NAME,
+            projection,
+            selection,
+            selectionArgs,
+            null,
+            null,
+            null
+        )
+
+        with(cursor){
+            while(moveToNext()){
+                return getDouble(getColumnIndexOrThrow(resultColumn))
+            }
+        }
+
+        return 0.0
     }
     fun getTimeThisYear(): Double{
-        TODO("Not implemented yet")
+        val db = this.readableDatabase
+        val resultColumn = "SUMA"
+
+        val yearStart = clearHoursAndMinutes(Calendar.getInstance())
+        yearStart.set(Calendar.DAY_OF_YEAR, yearStart.getActualMinimum(Calendar.DAY_OF_YEAR))
+        val yearEnd = clearHoursAndMinutes(Calendar.getInstance())
+        yearEnd.set(Calendar.DAY_OF_YEAR, yearEnd.getActualMaximum(Calendar.DAY_OF_YEAR))
+
+        val moreThan = yearStart.timeInMillis
+        val lessThan = yearEnd.timeInMillis
+
+        val projection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) as $resultColumn")
+        val selection = "${GoalDatabaseConstants.SessionTable.SESSION_DATE} >= ? AND ${GoalDatabaseConstants.SessionTable.SESSION_DATE} <= ?"
+        val selectionArgs = arrayOf(moreThan.toString(), lessThan.toString())
+
+        val cursor = db.query(
+            GoalDatabaseConstants.SessionTable.TABLE_NAME,
+            projection,
+            selection,
+            selectionArgs,
+            null,
+            null,
+            null
+        )
+
+        with(cursor){
+            while(moveToNext()){
+                return getDouble(getColumnIndexOrThrow(resultColumn))
+            }
+        }
+
+        return 0.0
+    }
+    private fun clearHoursAndMinutes(calendar: Calendar): Calendar{
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        return calendar
     }
 }

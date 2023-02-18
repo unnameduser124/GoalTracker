@@ -79,6 +79,24 @@ class GlobalStatsPlaceholderFragment: Fragment() {
             averageTimePerYear
         )
 
+        val timeWithinLastWeek = roundDouble(dbService.getTimeWithinLastWeek(), HOURS_ROUND_MULTIPLIER)
+        binding.globalStatsTimeWithinLastWeek.text = String.format(
+            requireContext().getString(R.string.hours_placeholder),
+            timeWithinLastWeek
+        )
+
+
+        val timeThisMonth = roundDouble(dbService.getTimeThisMonth(), HOURS_ROUND_MULTIPLIER)
+        binding.globalStatsTimeThisMonth.text = String.format(
+            requireContext().getString(R.string.hours_placeholder),
+            timeThisMonth
+        )
+
+        val timeThisYear = roundDouble(dbService.getTimeThisYear(), HOURS_ROUND_MULTIPLIER)
+        binding.globalStatsTimeThisYear.text = String.format(
+            requireContext().getString(R.string.hours_placeholder),
+            timeThisYear
+        )
         return binding.root
     }
     companion object{
