@@ -20,8 +20,8 @@ class TimeGoal(
         Calendar.getInstance(),
         Calendar.getInstance(),
         mutableListOf()){
-        startTime.timeInMillis = data.startTime * 1000
-        deadline.timeInMillis = data.deadline * 1000
+        startTime.timeInMillis = data.startTime
+        deadline.timeInMillis = data.deadline
         goalTimeAmount = data.goalTimeAmount
     }
 

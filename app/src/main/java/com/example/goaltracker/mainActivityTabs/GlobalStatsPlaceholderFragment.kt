@@ -1,6 +1,5 @@
 package com.example.goaltracker.mainActivityTabs
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.goaltracker.HOURS_ROUND_MULTIPLIER
 import com.example.goaltracker.R
-import com.example.goaltracker.database.StatsDatabaseService
+import com.example.goaltracker.database.GlobalStatsDatabaseService
 import com.example.goaltracker.database.TimeGoalDatabaseService
 import com.example.goaltracker.databinding.GlobalStatisticsTabBinding
 import com.example.goaltracker.roundDouble
@@ -30,7 +29,7 @@ class GlobalStatsPlaceholderFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = GlobalStatisticsTabBinding.inflate(layoutInflater)
-        val dbService = StatsDatabaseService(requireContext())
+        val dbService = GlobalStatsDatabaseService(requireContext())
         val totalTime = roundDouble(dbService.getTotalTime(), HOURS_ROUND_MULTIPLIER)
         binding.globalStatsTotalTime.text = String.format(
             requireContext().getString(R.string.hours_placeholder),

@@ -5,7 +5,7 @@ import android.provider.BaseColumns
 import com.example.goaltracker.*
 import java.util.*
 
-class StatsDatabaseService(context: Context): GoalDatabase(context) {
+class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
     fun getTotalTime(): Double{
         val db = this.readableDatabase
 
@@ -291,8 +291,8 @@ class StatsDatabaseService(context: Context): GoalDatabase(context) {
         val db = this.readableDatabase
         val resultColumn = "SUMA"
 
-        val currentDate = clearHoursAndMinutes(Calendar.getInstance())
-        val sevenDaysAgo = clearHoursAndMinutes(Calendar.getInstance())
+        val currentDate = setCalendarToDayStart(Calendar.getInstance())
+        val sevenDaysAgo = setCalendarToDayStart(Calendar.getInstance())
         sevenDaysAgo.timeInMillis -= MILLIS_IN_DAY.toLong() * (DAYS_IN_WEEK.toLong() - 1)
 
         val moreThan = sevenDaysAgo.timeInMillis
@@ -324,9 +324,9 @@ class StatsDatabaseService(context: Context): GoalDatabase(context) {
         val db = this.readableDatabase
         val resultColumn = "SUMA"
 
-        val monthStart = clearHoursAndMinutes(Calendar.getInstance())
+        val monthStart = setCalendarToDayStart(Calendar.getInstance())
         monthStart.set(Calendar.DAY_OF_MONTH, monthStart.getActualMinimum(Calendar.DAY_OF_MONTH))
-        val monthEnd = clearHoursAndMinutes(Calendar.getInstance())
+        val monthEnd = setCalendarToDayStart(Calendar.getInstance())
         monthEnd.set(Calendar.DAY_OF_MONTH, monthEnd.getActualMaximum(Calendar.DAY_OF_MONTH))
 
         val moreThan = monthStart.timeInMillis
@@ -358,9 +358,9 @@ class StatsDatabaseService(context: Context): GoalDatabase(context) {
         val db = this.readableDatabase
         val resultColumn = "SUMA"
 
-        val yearStart = clearHoursAndMinutes(Calendar.getInstance())
+        val yearStart = setCalendarToDayStart(Calendar.getInstance())
         yearStart.set(Calendar.DAY_OF_YEAR, yearStart.getActualMinimum(Calendar.DAY_OF_YEAR))
-        val yearEnd = clearHoursAndMinutes(Calendar.getInstance())
+        val yearEnd = setCalendarToDayStart(Calendar.getInstance())
         yearEnd.set(Calendar.DAY_OF_YEAR, yearEnd.getActualMaximum(Calendar.DAY_OF_YEAR))
 
         val moreThan = yearStart.timeInMillis
@@ -387,12 +387,5 @@ class StatsDatabaseService(context: Context): GoalDatabase(context) {
         }
 
         return 0.0
-    }
-    private fun clearHoursAndMinutes(calendar: Calendar): Calendar{
-        calendar.set(Calendar.HOUR_OF_DAY, 0)
-        calendar.set(Calendar.MINUTE, 0)
-        calendar.set(Calendar.SECOND, 0)
-        calendar.set(Calendar.MILLISECOND, 0)
-        return calendar
     }
 }

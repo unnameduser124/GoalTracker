@@ -1,10 +1,17 @@
 <resources>
+    <string name="goal_time_amount_placeholder">%1$sh</string>
+    <string name="time_below_expected_label">Time below expected</string>
+    <string name="goal_time_left_placeholder">%1$sd %2$sh %3$smin</string>
+    <string name="goal_percentage_completed_placeholder">%1$s</string>
+    <string name="hours_placeholder">%1$sh</string>
+    <string name="time_period_progress_placeholder">%1$sh / %2$sh</string>
+
     <string name="app_name">GoalTracker</string>
-    <string name="goal_time_amount_label">time amount</string>
-    <string name="current_time_amount_label">Current</string>
-    <string name="goal_start_time_label">Start</string>
-    <string name="goal_end_time_label">Deadline</string>
-    <string name="goal_time_left_label">Time left</string>
+    <string name="goal_time_amount_label">goal time</string>
+    <string name="current_time_amount_label">current</string>
+    <string name="goal_start_time_label">start</string>
+    <string name="goal_end_time_label">deadline</string>
+    <string name="goal_time_left_label">time left</string>
     <string name="goal_percentage_completed_label">% completed</string>
     <string name="value_input_hint">value</string>
     <string name="goal_name_input_hint">name</string>
@@ -16,15 +23,9 @@
     <string name="goal_start_date_label">start date</string>
     <string name="deadline_date_label">deadline</string>
 
-    <string name="goal_time_amount_placeholder">%1$sh</string>
-    <string name="time_below_expected_label">Time below expected</string>
-    <string name="goal_time_left_placeholder">%1$sd %2$sh %3$smin</string>
-    <string name="goal_percentage_completed_placeholder">%1$s</string>
-    <string name="hours_placeholder">%1$sh</string>
     <string name="time_in_hours_label">time in hours</string>
     <string name="add_session_label">Add session</string>
     <string name="sessions_appbar_label">Sessions</string>
-
     <string name="total_time_label">total time</string>
     <string name="most_time_in_a_day_label">most in a day</string>
     <string name="longest_active_goal_label">longest goal</string>
@@ -37,4 +38,8 @@
     <string name="time_within_last_week_label">within last 7 days</string>
     <string name="time_within_last_month_label">this month</string>
     <string name="time_this_year_label">this year</string>
+    <string name="average_to_reach_the_goal_label">average to reach the goal</string>
+    <string name="average_label">average</string>
+    <string name="progress_label">progress %</string>
+    <string name="goal_stats_duration_label">time spent</string>
 </resources>

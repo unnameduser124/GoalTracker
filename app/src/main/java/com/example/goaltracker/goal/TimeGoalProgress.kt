@@ -1,13 +1,10 @@
 package com.example.goaltracker.goal
 
 import android.content.Context
+import com.example.goaltracker.getTimeDifferenceInDays
 import java.util.*
 import kotlin.math.floor
 
-fun getTimeDifferenceInDays(start: Calendar, end: Calendar): Int{
-    val timeInMillis = end.timeInMillis - start.timeInMillis
-    return floor(timeInMillis/1000.0/60/60/24).toInt()
-}
 
 fun getTimeDifferenceInMonths(start: Calendar, end: Calendar): Double{
     val months = (end.get(Calendar.YEAR) - start.get(Calendar.YEAR)) * 12 + end.get(Calendar.MONTH) - start.get(Calendar.MONTH)

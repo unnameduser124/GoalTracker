@@ -9,6 +9,7 @@ import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.viewpager.widget.ViewPager
 import com.example.goaltracker.*
 import com.example.goaltracker.database.SessionDatabaseService
 import com.example.goaltracker.database.TimeGoalDatabaseService
@@ -17,7 +18,9 @@ import com.example.goaltracker.databinding.GoalActivityBinding
 import com.example.goaltracker.goal.GoalSession
 import com.example.goaltracker.goal.TimeGoal
 import com.example.goaltracker.goal.getTimeDebt
+import com.example.goaltracker.goalActivity.statsTabs.SectionAdapterGoalActivity
 import com.example.goaltracker.sessionList.GoalSessionListActivity
+import com.google.android.material.tabs.TabLayout
 import java.text.SimpleDateFormat
 import kotlin.math.floor
 import java.util.*
@@ -55,7 +58,9 @@ class GoalActivity: AppCompatActivity() {
         binding.goalStartTime.text = simpleDateFormat.format(goal.startTime.time)
         binding.goalDeadline.text = simpleDateFormat.format(goal.deadline.time)
 
-        var timeLeftInSeconds = (goal.deadline.timeInMillis - Calendar.getInstance().timeInMillis)/1000
+        setUpViewPager(goalID)
+
+        var timeLeftInSeconds = (setCalendarToDayEnd(goal.deadline).timeInMillis - Calendar.getInstance().timeInMillis)/1000
         val daysLeft = floor(timeLeftInSeconds / SECONDS_IN_DAY).toLong()
         timeLeftInSeconds -= (daysLeft * SECONDS_IN_DAY).toLong()
         val hoursLeft = floor(timeLeftInSeconds/ SECONDS_IN_HOUR).toLong()
@@ -84,7 +89,7 @@ class GoalActivity: AppCompatActivity() {
                 if(popupBinding.valueInput.text.toString()!="" 
                     && popupBinding.valueInput.text.toString().toDouble()!=0.0){
                     val time = popupBinding.valueInput.text.toString().toDouble()
-                    val date = clearHoursAndMinutes(calendarFromDatePicker(popupBinding.sessionDatePicker))
+                    val date = setCalendarToDayStart(calendarFromDatePicker(popupBinding.sessionDatePicker))
                     val session = GoalSession(-1, date, time, goal.ID)
                     sessionDatabaseService.addSession(session)
                     updateViews(goal)
@@ -140,14 +145,15 @@ class GoalActivity: AppCompatActivity() {
         )
 
         binding.goalTimeDebt.text = String.format(getString(R.string.hours_placeholder), roundDouble(getTimeDebt(goal, this), HOURS_ROUND_MULTIPLIER))
+        setUpViewPager(goal.ID)
     }
 
-
-    private fun clearHoursAndMinutes(calendar: Calendar): Calendar{
-        calendar.set(Calendar.HOUR_OF_DAY, 0)
-        calendar.set(Calendar.MINUTE, 0)
-        calendar.set(Calendar.SECOND, 0)
-        calendar.set(Calendar.MILLISECOND, 0)
-        return calendar
+    private fun setUpViewPager(goalID: Long){
+        val sectionPageAdapter = SectionAdapterGoalActivity(supportFragmentManager, goalID)
+        val viewPager: ViewPager = binding.viewPager
+        viewPager.adapter = sectionPageAdapter
+        val tabs: TabLayout = binding.goalStatsTabLayout
+        tabs.setupWithViewPager(viewPager)
     }
+
 }
