@@ -9,6 +9,7 @@ import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.allViews
 import androidx.viewpager.widget.ViewPager
 import com.example.goaltracker.*
 import com.example.goaltracker.database.SessionDatabaseService
@@ -18,7 +19,10 @@ import com.example.goaltracker.databinding.GoalActivityBinding
 import com.example.goaltracker.goal.GoalSession
 import com.example.goaltracker.goal.TimeGoal
 import com.example.goaltracker.goal.getTimeDebt
+import com.example.goaltracker.goalActivity.statsTabs.DayStatsPlaceholderFragment
+import com.example.goaltracker.goalActivity.statsTabs.MonthStatsPlaceholderFragment
 import com.example.goaltracker.goalActivity.statsTabs.SectionAdapterGoalActivity
+import com.example.goaltracker.goalActivity.statsTabs.YearStatsPlaceholderFragment
 import com.example.goaltracker.sessionList.GoalSessionListActivity
 import com.google.android.material.tabs.TabLayout
 import java.text.SimpleDateFormat
@@ -151,7 +155,13 @@ class GoalActivity: AppCompatActivity() {
         )
 
         binding.goalTimeDebt.text = String.format(getString(R.string.hours_placeholder), roundDouble(getTimeDebt(goal, this), HOURS_ROUND_MULTIPLIER))
-        setUpViewPager(goal.ID)
+
+        val dayStatsTab = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + 0) as DayStatsPlaceholderFragment
+        dayStatsTab.updateViews()
+        val monthStatsTab = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + 1) as MonthStatsPlaceholderFragment
+        monthStatsTab.updateViews()
+        val yearStatsTab = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + 2) as YearStatsPlaceholderFragment
+        yearStatsTab.updateViews()
     }
 
     private fun setUpViewPager(goalID: Long){
@@ -160,6 +170,9 @@ class GoalActivity: AppCompatActivity() {
         viewPager.adapter = sectionPageAdapter
         val tabs: TabLayout = binding.goalStatsTabLayout
         tabs.setupWithViewPager(viewPager)
+
     }
+
+
 
 }

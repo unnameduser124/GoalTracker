@@ -17,6 +17,7 @@ import com.example.goaltracker.roundDouble
 class MonthStatsPlaceholderFragment(val goalID: Long): Fragment() {
 
     private lateinit var pageViewModel:  GoalActivityPageViewModel
+    private lateinit var binding: GoalStatsTabBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,8 +31,14 @@ class MonthStatsPlaceholderFragment(val goalID: Long): Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = GoalStatsTabBinding.inflate(layoutInflater)
+        binding = GoalStatsTabBinding.inflate(layoutInflater)
 
+        updateViews()
+
+        return binding.root
+    }
+
+    fun updateViews(){
         val dbService = GoalStatsDatabaseService(requireContext(), goalID)
 
         val monthTime = roundDouble(dbService.getGoalTimeThisMonth(), HOURS_ROUND_MULTIPLIER)
@@ -52,7 +59,6 @@ class MonthStatsPlaceholderFragment(val goalID: Long): Fragment() {
             monthlyAverage
         )
 
-        return binding.root
     }
 
 
