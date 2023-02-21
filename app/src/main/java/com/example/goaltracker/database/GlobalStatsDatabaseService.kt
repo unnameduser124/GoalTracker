@@ -34,7 +34,7 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
         val columnName = "SUMA"
         val projection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) as $columnName")
 
-        val groupBy = "${GoalDatabaseConstants.SessionTable.SESSION_DATE}"
+        val groupBy = GoalDatabaseConstants.SessionTable.SESSION_DATE
         val orderBy = "$columnName DESC"
 
         val cursor = db.query(
@@ -57,9 +57,9 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
         val db = this.readableDatabase
 
         val columnName = "SUMA"
-        val projection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) as $columnName", "${GoalDatabaseConstants.SessionTable.GOAL_ID}")
+        val projection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) as $columnName", GoalDatabaseConstants.SessionTable.GOAL_ID)
 
-        val groupBy = "${GoalDatabaseConstants.SessionTable.GOAL_ID}"
+        val groupBy = GoalDatabaseConstants.SessionTable.GOAL_ID
         val orderBy = "$columnName DESC"
 
         val cursor = db.query(
@@ -73,7 +73,7 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
 
         with(cursor) {
             if(moveToNext()){
-                return getLong(getColumnIndexOrThrow("${GoalDatabaseConstants.SessionTable.GOAL_ID}"))
+                return getLong(getColumnIndexOrThrow(GoalDatabaseConstants.SessionTable.GOAL_ID))
             }
 
         }
@@ -82,9 +82,11 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
     fun getLongestActiveGoal(): Long{
         val db = this.readableDatabase
 
-        val projection = arrayOf("(${GoalDatabaseConstants.TimeGoalTable.DEADLINE}-${GoalDatabaseConstants.TimeGoalTable.START_TIME}) as DIFF", "${BaseColumns._ID}")
+        val projection = arrayOf("(${GoalDatabaseConstants.TimeGoalTable.DEADLINE}-${GoalDatabaseConstants.TimeGoalTable.START_TIME}) as DIFF",
+            BaseColumns._ID
+        )
 
-        val groupBy = "${BaseColumns._ID}"
+        val groupBy = BaseColumns._ID
         val orderBy = "DIFF DESC"
 
         val cursor = db.query(
@@ -98,7 +100,7 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
 
         with(cursor) {
             if(moveToNext()){
-                return getLong(getColumnIndexOrThrow("${BaseColumns._ID}"))
+                return getLong(getColumnIndexOrThrow(BaseColumns._ID))
             }
 
         }
@@ -130,9 +132,14 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
     fun getAverageTimePerDay(): Double{
         val db = this.readableDatabase
 
-        val columnName = "VALUE"
-        val dayDifference = "(MAX(${GoalDatabaseConstants.SessionTable.SESSION_DATE}) - MIN(${GoalDatabaseConstants.SessionTable.SESSION_DATE})) / ($MILLIS_IN_DAY) + 1"
-        val projection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) / CAST($dayDifference as REAL) as $columnName")
+        val timeAmountColumn = "TimeSum"
+        val startColumn = "MinDate"
+        val endColumn = "MaxDate"
+        val projection = arrayOf(
+            "SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) as $timeAmountColumn",
+            "MAX(${GoalDatabaseConstants.SessionTable.SESSION_DATE}) as $endColumn",
+            "MIN(${GoalDatabaseConstants.SessionTable.SESSION_DATE}) as $startColumn"
+        )
 
         val cursor = db.query(
             GoalDatabaseConstants.SessionTable.TABLE_NAME,
@@ -146,7 +153,16 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
 
         with(cursor){
             while(moveToNext()){
-                return getDouble(getColumnIndexOrThrow(columnName))
+                val timeAmount = getDouble(getColumnIndexOrThrow(timeAmountColumn))
+                val startTime = getLong(getColumnIndexOrThrow(startColumn))
+                val endTime = getLong(getColumnIndexOrThrow(endColumn))
+                val today = setCalendarToDayStart(Calendar.getInstance())
+
+                return if(endTime > today.timeInMillis){
+                    timeAmount / (getTimeDifferenceInDays(Calendar.getInstance().apply{ timeInMillis = startTime }, Calendar.getInstance().apply { timeInMillis = endTime }) + 1)
+                } else{
+                    timeAmount / (getTimeDifferenceInDays(Calendar.getInstance().apply{ timeInMillis = startTime }, today) + 1)
+                }
             }
         }
         return 0.0

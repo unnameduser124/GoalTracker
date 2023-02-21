@@ -78,7 +78,6 @@ class GoalStatsDatabaseService(val context: Context, val goalID: Long): GoalData
         val db = this.readableDatabase
         val totalTimeColumn = "TotalTime"
         val startTimeColumn = "goalStartTime"
-        val deadlineColumn = "goalDeadline"
 
         val startTimeQuery = "(SELECT ${GoalDatabaseConstants.TimeGoalTable.START_TIME} FROM ${GoalDatabaseConstants.TimeGoalTable.TABLE_NAME} WHERE ${BaseColumns._ID} = $goalID) as $startTimeColumn"
         val goalTotalTime = "SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) as $totalTimeColumn"

@@ -32,6 +32,9 @@
             android:name=".goalActivity.GoalActivity"
             android:parentActivityName=".MainActivity"/>
         <activity
+            android:name=".EditActivity"
+            android:parentActivityName=".goalActivity.GoalActivity"/>
+        <activity
             android:name=".sessionList.GoalSessionListActivity"
             android:parentActivityName=".MainActivity"/>
     </application>

@@ -42,7 +42,7 @@ class DayStatsPlaceholderFragment(val goalID: Long): Fragment() {
         )
         binding.goalStatsAverageToReachGoal.text = String.format(
             requireContext().getString(R.string.hours_placeholder),
-            avgExpected
+            if(avgExpected > 0.0) avgExpected else 0.0
         )
         binding.goalStatsProgress.text = if(dayTime != 0.0) roundDouble((dayTime/avgExpected) * 100, PERCENTAGE_ROUND_MULTIPLIER).toString() else "0.0"
 

@@ -18,9 +18,10 @@ class AddActivity: AppCompatActivity() {
         binding = TimeGoalAddLayoutBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.addGoalStartDate.setOnDateChangedListener { view, year, monthOfYear, dayOfMonth ->
-            val minDateCalendar = calendarFromDatePicker(binding.addGoalStartDate)
-            binding.addGoalDeadlineDate.minDate = minDateCalendar.timeInMillis
+        setDeadlineMinDate()
+
+        binding.addGoalStartDate.setOnDateChangedListener { _, _, _, _ ->
+            setDeadlineMinDate()
         }
 
         binding.addGoalButton.setOnClickListener {
@@ -42,9 +43,9 @@ class AddActivity: AppCompatActivity() {
         val name = binding.addGoalNameInput.text.toString()
         val timeAmount = binding.addGoalTimeAmountInput.text.toString().toDouble()
         var startTime = calendarFromDatePicker(binding.addGoalStartDate)
-        startTime = clearHoursAndMinutes(startTime)
+        startTime = setCalendarToDayStart(startTime)
         var deadline = calendarFromDatePicker(binding.addGoalDeadlineDate)
-        deadline = clearHoursAndMinutes(deadline)
+        deadline = setCalendarToDayStart(deadline)
 
         return TimeGoal(-1, name, timeAmount, startTime, deadline)
     }
@@ -67,11 +68,8 @@ class AddActivity: AppCompatActivity() {
         return calendar
     }
 
-    private fun clearHoursAndMinutes(calendar: Calendar): Calendar{
-        calendar.set(Calendar.HOUR_OF_DAY, 0)
-        calendar.set(Calendar.MINUTE, 0)
-        calendar.set(Calendar.SECOND, 0)
-        calendar.set(Calendar.MILLISECOND, 0)
-        return calendar
+    private fun setDeadlineMinDate(){
+        val minDateCalendar = calendarFromDatePicker(binding.addGoalStartDate)
+        binding.addGoalDeadlineDate.minDate = minDateCalendar.timeInMillis
     }
 }

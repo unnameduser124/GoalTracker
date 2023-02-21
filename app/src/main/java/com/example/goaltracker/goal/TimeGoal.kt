@@ -9,7 +9,7 @@ class TimeGoal(
     val ID: Long,
     var name: String,
     var goalTimeAmount: Double,
-    val startTime: Calendar,
+    var startTime: Calendar,
     var deadline: Calendar,
     var goalSessions: MutableList<GoalSession> = mutableListOf(),
 ) {

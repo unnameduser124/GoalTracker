@@ -42,7 +42,6 @@ class GoalActivity: AppCompatActivity() {
         if(dataGoal!=null){
             goal = TimeGoal(dataGoal)
             goal.goalSessions = sessionDatabaseService.getSessionsForGoal(goal.ID)
-            println(goal.goalSessions.size)
         }
         else{
             val intent = Intent(this, MainActivity::class.java)
@@ -52,8 +51,8 @@ class GoalActivity: AppCompatActivity() {
         }
 
         binding.appbarGoalName.text = goal.name
-        binding.goalTimeAmount.text = String.format(getString(R.string.goal_time_amount_placeholder), roundDouble(goal.goalTimeAmount, 10))
-        binding.currentTimeAmount.text = String.format(getString(R.string.goal_time_amount_placeholder), roundDouble(goal.getCurrentTimeAmount(this), 10))
+        binding.goalTimeAmount.text = String.format(getString(R.string.goal_time_amount_placeholder), roundDouble(goal.goalTimeAmount, HOURS_ROUND_MULTIPLIER))
+        binding.currentTimeAmount.text = String.format(getString(R.string.goal_time_amount_placeholder), roundDouble(goal.getCurrentTimeAmount(this), HOURS_ROUND_MULTIPLIER))
         val simpleDateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.ROOT)
         binding.goalStartTime.text = simpleDateFormat.format(goal.startTime.time)
         binding.goalDeadline.text = simpleDateFormat.format(goal.deadline.time)
@@ -70,10 +69,10 @@ class GoalActivity: AppCompatActivity() {
 
         binding.goalPercentageCompleted.text = String.format(
             getString(R.string.goal_percentage_completed_placeholder),
-            roundDouble((goal.getCurrentTimeAmount(this)/goal.goalTimeAmount)*100, 10)
+            roundDouble((goal.getCurrentTimeAmount(this)/goal.goalTimeAmount)*100, PERCENTAGE_ROUND_MULTIPLIER)
         )
 
-        binding.goalTimeDebt.text = String.format(getString(R.string.hours_placeholder), roundDouble(getTimeDebt(goal, this), 10))
+        binding.goalTimeDebt.text = String.format(getString(R.string.hours_placeholder), roundDouble(getTimeDebt(goal, this), HOURS_ROUND_MULTIPLIER))
 
         binding.addSessionButton.setOnClickListener{
             val popupBinding = AddSessionPopupBinding.inflate(layoutInflater)
@@ -102,6 +101,13 @@ class GoalActivity: AppCompatActivity() {
 
         binding.sessionsButton.setOnClickListener {
             val intent = Intent(this, GoalSessionListActivity::class.java)
+            intent.putExtra("GOAL_ID", goal.ID)
+            finish()
+            startActivity(intent)
+        }
+
+        binding.editButton.setOnClickListener {
+            val intent = Intent(this, EditActivity::class.java)
             intent.putExtra("GOAL_ID", goal.ID)
             finish()
             startActivity(intent)

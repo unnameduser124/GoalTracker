@@ -42,7 +42,7 @@ class MonthStatsPlaceholderFragment(val goalID: Long): Fragment() {
         )
         binding.goalStatsAverageToReachGoal.text = String.format(
             requireContext().getString(R.string.hours_placeholder),
-            avgExpected
+            if(avgExpected > 0.0) avgExpected else 0.0
         )
         binding.goalStatsProgress.text = if(monthTime != 0.0) roundDouble((monthTime/avgExpected) * 100, PERCENTAGE_ROUND_MULTIPLIER).toString() else "0.0"
 

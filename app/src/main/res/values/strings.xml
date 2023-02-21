@@ -1,10 +1,11 @@
 <resources>
     <string name="goal_time_amount_placeholder">%1$sh</string>
-    <string name="time_below_expected_label">Time below expected</string>
+    <string name="time_below_expected_label">time below expected</string>
     <string name="goal_time_left_placeholder">%1$sd %2$sh %3$smin</string>
     <string name="goal_percentage_completed_placeholder">%1$s</string>
     <string name="hours_placeholder">%1$sh</string>
     <string name="time_period_progress_placeholder">%1$sh / %2$sh</string>
+    <string name="edit_goal_appbar_label">Edit %1$s</string>
 
     <string name="app_name">GoalTracker</string>
     <string name="goal_time_amount_label">goal time</string>
@@ -42,4 +43,6 @@
     <string name="average_label">average</string>
     <string name="progress_label">progress %</string>
     <string name="goal_stats_duration_label">time spent</string>
+    <string name="save_changes_button_label">save changes</string>
+    <string name="delete_button_label">delete</string>
 </resources>
