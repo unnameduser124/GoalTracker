@@ -4,7 +4,6 @@
     <string name="goal_time_left_placeholder">%1$sd %2$sh %3$smin</string>
     <string name="goal_percentage_completed_placeholder">%1$s</string>
     <string name="hours_placeholder">%1$sh</string>
-    <string name="time_period_progress_placeholder">%1$sh / %2$sh</string>
     <string name="edit_goal_appbar_label">Edit %1$s</string>
 
     <string name="app_name">GoalTracker</string>
@@ -14,7 +13,6 @@
     <string name="goal_end_time_label">deadline</string>
     <string name="goal_time_left_label">time left</string>
     <string name="goal_percentage_completed_label">% completed</string>
-    <string name="value_input_hint">value</string>
     <string name="goal_name_input_hint">name</string>
     <string name="goal_time_amount_input_hint">duration in hours</string>
     <string name="add_button_label">add</string>
