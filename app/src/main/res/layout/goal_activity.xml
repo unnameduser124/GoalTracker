@@ -27,6 +27,7 @@
                 android:textAlignment="viewStart"
                 android:textColor="@color/white"
                 android:textSize = "20sp"
+                android:padding="10dp"
                 tools:text = "goal name"/>
             <com.google.android.material.button.MaterialButton
                 android:layout_width="40dp"
@@ -75,7 +76,9 @@
         android:gravity="center"
         tools:text = "1000h"
         android:textSize = "22sp"
-        android:layout_margin="20dp"/>
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -94,7 +97,9 @@
         tools:text = "500h 37min"
         android:gravity="center"
         android:textSize = "22sp"
-        android:layout_margin="20dp"/>
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"/>
 
     <!-- Second row -->
 
@@ -116,7 +121,9 @@
         tools:text = "01.01.2023"
         android:gravity="center"
         android:textSize = "22sp"
-        android:layout_margin="20dp"/>
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -135,7 +142,9 @@
         tools:text = "31.12.2023"
         android:gravity="center"
         android:textSize = "22sp"
-        android:layout_margin="20dp"/>
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"/>
 
     <!-- Third row -->
 
@@ -157,7 +166,9 @@
         tools:text = "51%"
         android:gravity="center"
         android:textSize = "22sp"
-        android:layout_margin="20dp"/>
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -176,7 +187,9 @@
         tools:text = "320d 11h 14min"
         android:gravity="center"
         android:textSize = "22sp"
-        android:layout_margin="20dp"/>
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"/>
 
     <!-- Fourth row -->
 
@@ -195,8 +208,9 @@
         tools:text = "- 300h 17min"
         android:gravity="center"
         android:textSize = "22sp"
-        android:layout_marginTop="20dp"
-        />
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"/>
 
     <!-- Tabbed view pager -->
 

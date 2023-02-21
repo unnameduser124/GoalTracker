@@ -158,4 +158,14 @@ class SessionDatabaseService(context: Context): GoalDatabase(context) {
         }
         return 0.0
     }
+
+    fun deleteSessionByGoalID(goalID: Long) {
+        val db = this.writableDatabase
+
+        val selection = "${GOAL_ID} = ?"
+
+        val selectionArgs = arrayOf(goalID.toString())
+
+        db.delete(TABLE_NAME, selection, selectionArgs)
+    }
 }

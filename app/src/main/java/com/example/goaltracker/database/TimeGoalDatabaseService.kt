@@ -13,7 +13,7 @@ import com.example.goaltracker.database.GoalDatabaseConstants.TimeGoalTable.GOAL
 import com.example.goaltracker.database.GoalDatabaseConstants.TimeGoalTable.START_TIME
 import com.example.goaltracker.database.GoalDatabaseConstants.TimeGoalTable.TABLE_NAME
 
-class TimeGoalDatabaseService(context: Context): GoalDatabase(context){
+class TimeGoalDatabaseService(val context: Context): GoalDatabase(context){
 
     fun addGoal(timeGoal: TimeGoal){
         val goal = DataTimeGoal(timeGoal)
@@ -98,6 +98,9 @@ class TimeGoalDatabaseService(context: Context): GoalDatabase(context){
         val selectionArgs = arrayOf(id.toString())
 
         db.delete(TABLE_NAME, selection, selectionArgs)
+
+        val dbService = SessionDatabaseService(context)
+        dbService.deleteSessionByGoalID(id)
     }
 
     fun getAllGoalNames(): List<TimeGoal>{

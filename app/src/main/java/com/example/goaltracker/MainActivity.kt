@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.viewpager.widget.ViewPager
 import com.example.goaltracker.database.GoalDatabase
+import com.example.goaltracker.database.SessionDatabaseService
 import com.example.goaltracker.database.TimeGoalDatabaseService
 import com.example.goaltracker.databinding.ActivityMainBinding
 import com.example.goaltracker.goal.TimeGoal

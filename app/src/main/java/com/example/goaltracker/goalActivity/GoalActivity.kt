@@ -156,12 +156,27 @@ class GoalActivity: AppCompatActivity() {
 
         binding.goalTimeDebt.text = String.format(getString(R.string.hours_placeholder), roundDouble(getTimeDebt(goal, this), HOURS_ROUND_MULTIPLIER))
 
-        val dayStatsTab = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + 0) as DayStatsPlaceholderFragment
-        dayStatsTab.updateViews()
-        val monthStatsTab = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + 1) as MonthStatsPlaceholderFragment
-        monthStatsTab.updateViews()
-        val yearStatsTab = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + 2) as YearStatsPlaceholderFragment
-        yearStatsTab.updateViews()
+        try{
+            val dayStatsTab = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + 2) as DayStatsPlaceholderFragment
+            dayStatsTab.updateViews()
+        }
+        catch (error: java.lang.NullPointerException){
+            println(error.message)
+        }
+        try{
+            val monthStatsTab = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + 1) as MonthStatsPlaceholderFragment
+            monthStatsTab.updateViews()
+        }
+        catch (error: java.lang.NullPointerException){
+            println(error.message)
+        }
+        try{
+            val yearStatsTab = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + 2) as YearStatsPlaceholderFragment
+            yearStatsTab.updateViews()
+        }
+        catch (error: java.lang.NullPointerException){
+            println(error.message)
+        }
     }
 
     private fun setUpViewPager(goalID: Long){
