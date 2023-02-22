@@ -96,7 +96,7 @@ fun makeLineChart(chart: LineChart, data: List<Pair<Calendar, Double>>, context:
         override fun getFormattedValue(value: Float): String {
             return String.format(
                 context.getString(R.string.hours_placeholder),
-                value
+                roundDouble(value.toDouble(), HOURS_ROUND_MULTIPLIER)
             )
         }
     }
@@ -111,6 +111,7 @@ fun makeLineChart(chart: LineChart, data: List<Pair<Calendar, Double>>, context:
     chart.axisLeft.textColor = Color.WHITE
 
     chart.axisRight.setDrawGridLines(false)
+    chart.axisRight.setDrawAxisLine(false)
 
     chart.legend.isEnabled = false
 
@@ -157,7 +158,7 @@ fun makeBarChart(chart: BarChart, data: List<Pair<Calendar, Double>>, context: C
         override fun getFormattedValue(value: Float): String {
             return String.format(
                 context.getString(R.string.hours_placeholder),
-                value
+                roundDouble(value.toDouble(), HOURS_ROUND_MULTIPLIER)
             )
         }
     }
@@ -177,18 +178,7 @@ fun makeBarChart(chart: BarChart, data: List<Pair<Calendar, Double>>, context: C
     chart.legend.isEnabled = false
 
     //add a margin of one day for the right and left side of the chart
-    val calendar = Calendar.getInstance()
-    if (data.isNotEmpty()) {
-        calendar.timeInMillis = data.first().first.timeInMillis
-        calendar.add(Calendar.DAY_OF_MONTH, -1)
-        chart.xAxis.axisMinimum = calendar.timeInMillis.toFloat()
-
-        calendar.timeInMillis = data.last().first.timeInMillis
-        calendar.add(Calendar.DAY_OF_MONTH, 1)
-        chart.xAxis.axisMaximum = calendar.timeInMillis.toFloat()
-
-        barChartMargin(chart, chartLength)
-    }
+    barChartMargin(chart, chartLength)
 }
 
 fun barChartMargin(chart: BarChart, durationPeriod: DurationPeriod){
@@ -251,18 +241,18 @@ fun lineChartMargin(chart: LineChart, durationPeriod: DurationPeriod){
     }
     else if(durationPeriod == DurationPeriod.ThisMonth){
         val startCalendar = setCalendarToDayStart(Calendar.getInstance())
-        startCalendar.set(Calendar.DAY_OF_MONTH, startCalendar.getActualMaximum(Calendar.DAY_OF_MONTH))
+        startCalendar.set(Calendar.DAY_OF_MONTH, startCalendar.getActualMinimum(Calendar.DAY_OF_MONTH))
         val endCalendar = setCalendarToDayStart(Calendar.getInstance())
-        startCalendar.set(Calendar.DAY_OF_MONTH, endCalendar.getActualMinimum(Calendar.DAY_OF_MONTH) + 1)
+        endCalendar.set(Calendar.DAY_OF_MONTH, endCalendar.getActualMaximum(Calendar.DAY_OF_MONTH) + 1)
 
         chart.xAxis.axisMaximum = endCalendar.timeInMillis.toFloat()
         chart.xAxis.axisMinimum = startCalendar.timeInMillis.toFloat()
     }
     else{
         val startCalendar = setCalendarToDayStart(Calendar.getInstance())
-        startCalendar.set(Calendar.DAY_OF_YEAR, startCalendar.getActualMaximum(Calendar.DAY_OF_YEAR))
+        startCalendar.set(Calendar.DAY_OF_YEAR, startCalendar.getActualMinimum(Calendar.DAY_OF_YEAR))
         val endCalendar = setCalendarToDayStart(Calendar.getInstance())
-        startCalendar.set(Calendar.DAY_OF_YEAR, endCalendar.getActualMinimum(Calendar.DAY_OF_YEAR) + 1)
+        endCalendar.set(Calendar.DAY_OF_YEAR, endCalendar.getActualMaximum(Calendar.DAY_OF_YEAR) + 1)
 
         chart.xAxis.axisMaximum = endCalendar.timeInMillis.toFloat()
         chart.xAxis.axisMinimum = startCalendar.timeInMillis.toFloat()

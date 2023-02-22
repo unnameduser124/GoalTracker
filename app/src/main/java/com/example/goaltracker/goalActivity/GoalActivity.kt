@@ -157,7 +157,7 @@ class GoalActivity: AppCompatActivity() {
         binding.goalTimeDebt.text = String.format(getString(R.string.hours_placeholder), roundDouble(getTimeDebt(goal, this), HOURS_ROUND_MULTIPLIER))
 
         try{
-            val dayStatsTab = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + 2) as DayStatsPlaceholderFragment
+            val dayStatsTab = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + 0) as DayStatsPlaceholderFragment
             dayStatsTab.updateViews()
         }
         catch (error: java.lang.NullPointerException){
