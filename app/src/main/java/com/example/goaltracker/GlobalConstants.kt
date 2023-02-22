@@ -13,3 +13,10 @@ const val DAYS_IN_WEEK = 7
 
 const val MILLIS_IN_DAY = 86400000
 const val MONTHS_IN_YEAR = 12
+
+enum class DurationPeriod{
+    Year,
+    Month,
+    ThisYear,
+    ThisMonth
+}

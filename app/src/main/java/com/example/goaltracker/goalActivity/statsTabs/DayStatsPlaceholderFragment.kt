@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.goaltracker.HOURS_ROUND_MULTIPLIER
@@ -32,6 +33,7 @@ class DayStatsPlaceholderFragment(val goalID: Long): Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = GoalStatsTabBinding.inflate(layoutInflater)
+        binding.goalStatsTimeChart.isGone = true
 
         updateViews()
         return binding.root
@@ -60,6 +62,7 @@ class DayStatsPlaceholderFragment(val goalID: Long): Fragment() {
 
         val timeThisMonth = GlobalStatsDatabaseService(requireContext()).getTimeThisMonth()
         val monthlyAverage = dbService.getGoalAverageMonthlyTime()
+
     }
 
 

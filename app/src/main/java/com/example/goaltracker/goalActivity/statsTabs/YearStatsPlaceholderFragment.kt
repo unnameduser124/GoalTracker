@@ -6,12 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.goaltracker.HOURS_ROUND_MULTIPLIER
-import com.example.goaltracker.PERCENTAGE_ROUND_MULTIPLIER
-import com.example.goaltracker.R
+import com.example.goaltracker.*
 import com.example.goaltracker.database.GoalStatsDatabaseService
+import com.example.goaltracker.database.SessionDatabaseService
 import com.example.goaltracker.databinding.GoalStatsTabBinding
-import com.example.goaltracker.roundDouble
+import java.util.*
 
 class YearStatsPlaceholderFragment(val goalID: Long): Fragment() {
 
@@ -59,6 +58,15 @@ class YearStatsPlaceholderFragment(val goalID: Long): Fragment() {
             yearAverage
         )
 
+
+         val yearStartCalendar = setCalendarToDayStart(Calendar.getInstance())
+         yearStartCalendar.set(Calendar.DAY_OF_YEAR, yearStartCalendar.getActualMinimum(Calendar.DAY_OF_YEAR))
+         val yearEndCalendar = setCalendarToDayStart(Calendar.getInstance())
+         yearEndCalendar.set(Calendar.DAY_OF_YEAR, yearEndCalendar.getActualMaximum(Calendar.DAY_OF_YEAR))
+
+         val data = SessionDatabaseService(requireContext()).getDailyDurationList(yearStartCalendar.timeInMillis, yearEndCalendar.timeInMillis)
+
+         makeLineChart(binding.goalStatsTimeChart, data, requireContext(), DurationPeriod.ThisYear)
     }
 
 

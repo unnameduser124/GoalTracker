@@ -6,13 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.goaltracker.HOURS_ROUND_MULTIPLIER
-import com.example.goaltracker.PERCENTAGE_ROUND_MULTIPLIER
-import com.example.goaltracker.R
+import com.example.goaltracker.*
 import com.example.goaltracker.database.GlobalStatsDatabaseService
 import com.example.goaltracker.database.GoalStatsDatabaseService
+import com.example.goaltracker.database.SessionDatabaseService
 import com.example.goaltracker.databinding.GoalStatsTabBinding
-import com.example.goaltracker.roundDouble
+import java.util.*
 
 class MonthStatsPlaceholderFragment(val goalID: Long): Fragment() {
 
@@ -58,6 +57,15 @@ class MonthStatsPlaceholderFragment(val goalID: Long): Fragment() {
             requireContext().getString(R.string.hours_placeholder),
             monthlyAverage
         )
+
+        val monthStartCalendar = setCalendarToDayStart(Calendar.getInstance())
+        monthStartCalendar.set(Calendar.DAY_OF_MONTH, monthStartCalendar.getActualMinimum(Calendar.DAY_OF_MONTH))
+        val monthEndCalendar = setCalendarToDayStart(Calendar.getInstance())
+        monthEndCalendar.set(Calendar.DAY_OF_MONTH, monthEndCalendar.getActualMaximum(Calendar.DAY_OF_MONTH))
+
+        val data = SessionDatabaseService(requireContext()).getDailyDurationList(monthStartCalendar.timeInMillis, monthEndCalendar.timeInMillis)
+
+        makeLineChart(binding.goalStatsTimeChart, data, requireContext(), DurationPeriod.ThisMonth)
 
     }
 

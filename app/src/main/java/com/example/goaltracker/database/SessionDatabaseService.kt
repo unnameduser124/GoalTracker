@@ -10,6 +10,7 @@ import com.example.goaltracker.database.GoalDatabaseConstants.SessionTable.SESSI
 import com.example.goaltracker.database.GoalDatabaseConstants.SessionTable.TABLE_NAME
 import com.example.goaltracker.database.GoalDatabaseConstants.SessionTable.TIME_AMOUNT
 import com.example.goaltracker.goal.GoalSession
+import java.util.*
 
 class SessionDatabaseService(context: Context): GoalDatabase(context) {
 
@@ -167,5 +168,42 @@ class SessionDatabaseService(context: Context): GoalDatabase(context) {
         val selectionArgs = arrayOf(goalID.toString())
 
         db.delete(TABLE_NAME, selection, selectionArgs)
+    }
+
+    fun getDailyDurationList(startDate: Long, endDate: Long): List<Pair<Calendar, Double>>{
+        val db = this.readableDatabase
+        val durationColumn = "Duration"
+
+        val durationList = mutableListOf<Pair<Calendar, Double>>()
+
+        val projection = arrayOf(
+            "SUM($TIME_AMOUNT) as $durationColumn",
+            SESSION_DATE
+        )
+
+        val groupBy = SESSION_DATE
+
+        val selection = "$SESSION_DATE >= ? AND $SESSION_DATE <= ?"
+        val selectionArgs = arrayOf(startDate.toString(), endDate.toString())
+
+        val cursor = db.query(
+            TABLE_NAME,
+            projection,
+            selection,
+            selectionArgs,
+            groupBy,
+            null,
+            null
+        )
+
+        with(cursor){
+            while(moveToNext()){
+                val duration = getDouble(getColumnIndexOrThrow(durationColumn))
+                val sessionDate = Calendar.getInstance().apply{ timeInMillis = getLong(getColumnIndexOrThrow(SESSION_DATE)) }
+
+                durationList.add(Pair(sessionDate, duration))
+            }
+        }
+        return durationList
     }
 }

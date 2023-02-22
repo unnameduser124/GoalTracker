@@ -404,4 +404,5 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
 
         return 0.0
     }
+
 }
