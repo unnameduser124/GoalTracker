@@ -64,9 +64,31 @@ class YearStatsPlaceholderFragment(val goalID: Long): Fragment() {
          val yearEndCalendar = setCalendarToDayStart(Calendar.getInstance())
          yearEndCalendar.set(Calendar.DAY_OF_YEAR, yearEndCalendar.getActualMaximum(Calendar.DAY_OF_YEAR))
 
-         val data = SessionDatabaseService(requireContext()).getDailyDurationList(yearStartCalendar.timeInMillis, yearEndCalendar.timeInMillis)
+         val data = SessionDatabaseService(requireContext()).getDailyDurationList(yearStartCalendar.timeInMillis, yearEndCalendar.timeInMillis, goalID)
+         val weeklyData = getWeeklyAverageList(data)
+         weeklyData.forEach{
+             println(it.second)
+         }
 
-         makeLineChart(binding.goalStatsTimeChart, data, requireContext(), DurationPeriod.ThisYear)
+         makeLineChart(binding.goalStatsTimeChart, weeklyData, requireContext(), DurationPeriod.ThisYear)
+    }
+
+    private fun getWeeklyAverageList(data: List<Pair<Calendar, Double>>): MutableList<Pair<Calendar, Double>>{
+        val weeksList = mutableListOf<Pair<Calendar, Double>>()
+
+        data.forEach {pair ->
+            val week = pair.first.get(Calendar.WEEK_OF_YEAR)
+            val existingWeek = weeksList.find { it.first.get(Calendar.WEEK_OF_YEAR) == week }
+            if(existingWeek == null){
+                weeksList.add(pair)
+            }
+            else{
+                val newPair = existingWeek.copy(second = existingWeek.second+pair.second)
+                weeksList[weeksList.indexOf(existingWeek)] = newPair
+            }
+        }
+
+        return weeksList
     }
 
 

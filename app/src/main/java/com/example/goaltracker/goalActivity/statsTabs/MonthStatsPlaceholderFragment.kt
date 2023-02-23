@@ -63,7 +63,7 @@ class MonthStatsPlaceholderFragment(val goalID: Long): Fragment() {
         val monthEndCalendar = setCalendarToDayStart(Calendar.getInstance())
         monthEndCalendar.set(Calendar.DAY_OF_MONTH, monthEndCalendar.getActualMaximum(Calendar.DAY_OF_MONTH))
 
-        val data = SessionDatabaseService(requireContext()).getDailyDurationList(monthStartCalendar.timeInMillis, monthEndCalendar.timeInMillis)
+        val data = SessionDatabaseService(requireContext()).getDailyDurationList(monthStartCalendar.timeInMillis, monthEndCalendar.timeInMillis, goalID)
 
         makeLineChart(binding.goalStatsTimeChart, data, requireContext(), DurationPeriod.ThisMonth)
 

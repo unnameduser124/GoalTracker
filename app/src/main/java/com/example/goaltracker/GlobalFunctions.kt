@@ -15,6 +15,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.floor
+import kotlin.math.roundToInt
 
 fun roundDouble(value: Double, multiplier: Int): Double{
     return (floor(value * multiplier)) / multiplier
@@ -66,6 +67,12 @@ fun getTimeInYears(start: Long, end: Long): Int{
         return 1
     }
     return endCal.get(Calendar.YEAR) - startCal.get(Calendar.YEAR)
+}
+
+fun doubleHoursToHoursAndMinutes(duration: Double): Pair<Int, Int>{
+    val hours = floor(duration).toInt()
+    val minutes = ((duration-hours)*60).roundToInt()
+    return Pair(hours, minutes)
 }
 
 fun makeLineChart(chart: LineChart, data: List<Pair<Calendar, Double>>, context: Context, chartLength: DurationPeriod){
@@ -238,6 +245,7 @@ fun lineChartMargin(chart: LineChart, durationPeriod: DurationPeriod){
 
         chart.xAxis.axisMaximum = endCalendar.timeInMillis.toFloat()
         chart.xAxis.axisMinimum = startCalendar.timeInMillis.toFloat()
+        chart.axisLeft.axisMinimum = 0f
     }
     else if(durationPeriod == DurationPeriod.ThisMonth){
         val startCalendar = setCalendarToDayStart(Calendar.getInstance())
@@ -256,5 +264,6 @@ fun lineChartMargin(chart: LineChart, durationPeriod: DurationPeriod){
 
         chart.xAxis.axisMaximum = endCalendar.timeInMillis.toFloat()
         chart.xAxis.axisMinimum = startCalendar.timeInMillis.toFloat()
+        chart.axisLeft.axisMinimum = 0f
     }
 }

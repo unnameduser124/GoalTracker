@@ -170,7 +170,7 @@ class SessionDatabaseService(context: Context): GoalDatabase(context) {
         db.delete(TABLE_NAME, selection, selectionArgs)
     }
 
-    fun getDailyDurationList(startDate: Long, endDate: Long): List<Pair<Calendar, Double>>{
+    fun getDailyDurationList(startDate: Long, endDate: Long, goalID: Long? = null): List<Pair<Calendar, Double>>{
         val db = this.readableDatabase
         val durationColumn = "Duration"
 
@@ -183,8 +183,8 @@ class SessionDatabaseService(context: Context): GoalDatabase(context) {
 
         val groupBy = SESSION_DATE
 
-        val selection = "$SESSION_DATE >= ? AND $SESSION_DATE <= ?"
-        val selectionArgs = arrayOf(startDate.toString(), endDate.toString())
+        val selection = if(goalID == null) "$SESSION_DATE >= ? AND $SESSION_DATE <= ?" else "$SESSION_DATE >= ? AND $SESSION_DATE <= ? AND $GOAL_ID = ?"
+        val selectionArgs = if(goalID == null) arrayOf(startDate.toString(), endDate.toString()) else arrayOf(startDate.toString(), endDate.toString(), goalID.toString())
 
         val cursor = db.query(
             TABLE_NAME,
