@@ -55,28 +55,9 @@ class GoalActivity: AppCompatActivity() {
         }
 
         binding.appbarGoalName.text = goal.name
-        binding.goalTimeAmount.text = String.format(getString(R.string.goal_time_amount_placeholder), roundDouble(goal.goalTimeAmount, HOURS_ROUND_MULTIPLIER))
-        binding.currentTimeAmount.text = String.format(getString(R.string.goal_time_amount_placeholder), roundDouble(goal.getCurrentTimeAmount(this), HOURS_ROUND_MULTIPLIER))
-        val simpleDateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.ROOT)
-        binding.goalStartTime.text = simpleDateFormat.format(goal.startTime.time)
-        binding.goalDeadline.text = simpleDateFormat.format(goal.deadline.time)
 
+        updateViews(goal)
         setUpViewPager(goalID)
-
-        var timeLeftInSeconds = (setCalendarToDayEnd(goal.deadline).timeInMillis - Calendar.getInstance().timeInMillis)/1000
-        val daysLeft = floor(timeLeftInSeconds / SECONDS_IN_DAY).toLong()
-        timeLeftInSeconds -= (daysLeft * SECONDS_IN_DAY).toLong()
-        val hoursLeft = floor(timeLeftInSeconds/ SECONDS_IN_HOUR).toLong()
-        timeLeftInSeconds -= (hoursLeft * SECONDS_IN_HOUR).toLong()
-        val minutesLeft = floor(timeLeftInSeconds/ SECONDS_IN_MINUTE).toLong() + 1
-        binding.goalTimeLeft.text = String.format(getString(R.string.goal_time_left_placeholder), daysLeft, hoursLeft, minutesLeft)
-
-        binding.goalPercentageCompleted.text = String.format(
-            getString(R.string.goal_percentage_completed_placeholder),
-            roundDouble((goal.getCurrentTimeAmount(this)/goal.goalTimeAmount)*100, PERCENTAGE_ROUND_MULTIPLIER)
-        )
-
-        binding.goalTimeDebt.text = String.format(getString(R.string.hours_placeholder), roundDouble(getTimeDebt(goal, this), HOURS_ROUND_MULTIPLIER))
 
         binding.addSessionButton.setOnClickListener{
             val popupBinding = AddSessionPopupBinding.inflate(layoutInflater)
@@ -140,7 +121,13 @@ class GoalActivity: AppCompatActivity() {
     }
 
     private fun updateViews(goal: TimeGoal){
-        binding.currentTimeAmount.text = String.format(getString(R.string.goal_time_amount_placeholder), roundDouble(goal.getCurrentTimeAmount(this), HOURS_ROUND_MULTIPLIER))
+        val simpleDateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.ROOT)
+        binding.goalStartTime.text = simpleDateFormat.format(goal.startTime.time)
+        binding.goalDeadline.text = simpleDateFormat.format(goal.deadline.time)
+        val totalTime = doubleHoursToHoursAndMinutes(goal.goalTimeAmount)
+        binding.goalTimeAmount.text = String.format(getString(R.string.hours_and_minutes_placeholder), totalTime.first, totalTime.second)
+        val currentTime = doubleHoursToHoursAndMinutes(goal.getCurrentTimeAmount(this))
+        binding.currentTimeAmount.text = String.format(getString(R.string.hours_and_minutes_placeholder), currentTime.first, currentTime.second)
         var timeLeftInSeconds = (goal.deadline.timeInMillis - Calendar.getInstance().timeInMillis)/1000
         val daysLeft = floor(timeLeftInSeconds / SECONDS_IN_DAY).toLong()
         timeLeftInSeconds -= (daysLeft * com.example.goaltracker.SECONDS_IN_DAY).toLong()
@@ -154,7 +141,8 @@ class GoalActivity: AppCompatActivity() {
             roundDouble((goal.getCurrentTimeAmount(this)/goal.goalTimeAmount)*100, PERCENTAGE_ROUND_MULTIPLIER)
         )
 
-        binding.goalTimeDebt.text = String.format(getString(R.string.hours_placeholder), roundDouble(getTimeDebt(goal, this), HOURS_ROUND_MULTIPLIER))
+        val timeDebt = doubleHoursToHoursAndMinutes(getTimeDebt(goal, this))
+        binding.goalTimeDebt.text = String.format(getString(R.string.hours_and_minutes_placeholder), timeDebt.first, timeDebt.second)
 
         try{
             val dayStatsTab = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + 0) as DayStatsPlaceholderFragment

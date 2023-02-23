@@ -75,6 +75,10 @@ fun doubleHoursToHoursAndMinutes(duration: Double): Pair<Int, Int>{
     return Pair(hours, minutes)
 }
 
+fun hoursAndMinutesToDoubleHours(hours: Int, minutes: Int): Double{
+    return hours + minutes/60.0
+}
+
 fun makeLineChart(chart: LineChart, data: List<Pair<Calendar, Double>>, context: Context, chartLength: DurationPeriod){
     val entries = data.map{ Entry(it.first.timeInMillis.toFloat(), it.second.toFloat()) }
 
@@ -101,9 +105,11 @@ fun makeLineChart(chart: LineChart, data: List<Pair<Calendar, Double>>, context:
     }
     chart.axisLeft.valueFormatter = object: ValueFormatter(){
         override fun getFormattedValue(value: Float): String {
+            val hourMinutePair = doubleHoursToHoursAndMinutes(value.toDouble())
             return String.format(
-                context.getString(R.string.hours_placeholder),
-                roundDouble(value.toDouble(), HOURS_ROUND_MULTIPLIER)
+                context.getString(R.string.hours_and_minutes_placeholder),
+                hourMinutePair.first,
+                hourMinutePair.second
             )
         }
     }
@@ -163,9 +169,11 @@ fun makeBarChart(chart: BarChart, data: List<Pair<Calendar, Double>>, context: C
     }
     chart.axisLeft.valueFormatter = object: ValueFormatter(){
         override fun getFormattedValue(value: Float): String {
+            val hourMinutePair = doubleHoursToHoursAndMinutes(value.toDouble())
             return String.format(
-                context.getString(R.string.hours_placeholder),
-                roundDouble(value.toDouble(), HOURS_ROUND_MULTIPLIER)
+                context.getString(R.string.hours_and_minutes_placeholder),
+                hourMinutePair.first,
+                hourMinutePair.second
             )
         }
     }

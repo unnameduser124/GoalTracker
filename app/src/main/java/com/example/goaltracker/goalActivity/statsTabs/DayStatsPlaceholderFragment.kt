@@ -7,13 +7,10 @@ import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.goaltracker.HOURS_ROUND_MULTIPLIER
-import com.example.goaltracker.PERCENTAGE_ROUND_MULTIPLIER
-import com.example.goaltracker.R
+import com.example.goaltracker.*
 import com.example.goaltracker.database.GlobalStatsDatabaseService
 import com.example.goaltracker.database.GoalStatsDatabaseService
 import com.example.goaltracker.databinding.GoalStatsTabBinding
-import com.example.goaltracker.roundDouble
 
 class DayStatsPlaceholderFragment(val goalID: Long): Fragment() {
 
@@ -42,27 +39,30 @@ class DayStatsPlaceholderFragment(val goalID: Long): Fragment() {
     fun updateViews(){
         val dbService = GoalStatsDatabaseService(requireContext(), goalID)
 
-        val dayTime = roundDouble(dbService.getGoalDayTime(), HOURS_ROUND_MULTIPLIER)
-        val avgExpected = roundDouble(dbService.getGoalExpectedDayTime(), HOURS_ROUND_MULTIPLIER)
+        val dayTime = doubleHoursToHoursAndMinutes(dbService.getGoalDayTime())
+        val avgExpected = doubleHoursToHoursAndMinutes(dbService.getGoalExpectedDayTime())
         binding.goalStatsDuration.text = String.format(
-            requireContext().getString(R.string.hours_placeholder),
-            dayTime
+            requireContext().getString(R.string.hours_and_minutes_placeholder),
+            dayTime.first,
+            dayTime.second
         )
+        val avgExpectedValue = if(avgExpected.first > 0 && avgExpected.second > 0) avgExpected else Pair(0,0)
         binding.goalStatsAverageToReachGoal.text = String.format(
-            requireContext().getString(R.string.hours_placeholder),
-            if(avgExpected > 0.0) avgExpected else 0.0
+            requireContext().getString(R.string.hours_and_minutes_placeholder),
+            avgExpectedValue.first,
+            avgExpectedValue.second
         )
-        binding.goalStatsProgress.text = if(dayTime != 0.0) roundDouble((dayTime/avgExpected) * 100, PERCENTAGE_ROUND_MULTIPLIER).toString() else "0.0"
+        val progressValue = dayTime.first + dayTime.second/60.0
+        val avgExpectedProgressValue = avgExpected.first + avgExpected.second/60.0
+        binding.goalStatsProgress.text = if(progressValue != 0.0) roundDouble((progressValue/avgExpectedProgressValue) * 100, PERCENTAGE_ROUND_MULTIPLIER).toString() else "0.0"
 
-        val dayAverage = roundDouble(dbService.getGoalAverageDailyTime(), HOURS_ROUND_MULTIPLIER)
+        val dayAverage = dbService.getGoalAverageDailyTime()
+        val dayAverageValue = if(dayAverage.isNaN()) Pair(0,0) else doubleHoursToHoursAndMinutes(dayAverage)
         binding.goalStatsAverage.text = String.format(
-            requireContext().getString(R.string.hours_placeholder),
-            if(dayAverage.isNaN()) 0.0 else dayAverage
+            requireContext().getString(R.string.hours_and_minutes_placeholder),
+            dayAverageValue.first,
+            dayAverageValue.second
         )
-
-        val timeThisMonth = GlobalStatsDatabaseService(requireContext()).getTimeThisMonth()
-        val monthlyAverage = dbService.getGoalAverageMonthlyTime()
-
     }
 
 

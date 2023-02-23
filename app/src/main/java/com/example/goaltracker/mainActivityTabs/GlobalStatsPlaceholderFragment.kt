@@ -78,10 +78,10 @@ class GlobalStatsPlaceholderFragment: Fragment() {
     private fun setUpViews(binding: GlobalStatisticsTabBinding, dbService: GlobalStatsDatabaseService){
 
         val totalTime = roundDouble(dbService.getTotalTime(), HOURS_ROUND_MULTIPLIER)
-        setTextViewText(binding.globalStatsTotalTime, totalTime)
+        setTextViewText(binding.globalStatsTotalTime, doubleHoursToHoursAndMinutes(totalTime))
 
         val mostTimeInDay = roundDouble(dbService.getMostTimeInDay(), HOURS_ROUND_MULTIPLIER)
-        setTextViewText(binding.globalStatsMostTimeInDay, mostTimeInDay)
+        setTextViewText(binding.globalStatsMostTimeInDay, doubleHoursToHoursAndMinutes(mostTimeInDay))
 
         var goalID = dbService.getGoalWithMostTime()
         binding.globalStatsGoalWithMostTime.text = goalName(goalID)
@@ -90,28 +90,28 @@ class GlobalStatsPlaceholderFragment: Fragment() {
         binding.globalStatsLongestGoal.text = goalName(goalID)
 
         val averageTimePerGoal = roundDouble(dbService.getAverageTimePerGoal(), HOURS_ROUND_MULTIPLIER)
-        setTextViewText(binding.globalStatsAvgTimePerGoal, averageTimePerGoal)
+        setTextViewText(binding.globalStatsAvgTimePerGoal, doubleHoursToHoursAndMinutes(averageTimePerGoal))
 
         val averageTimePerDay = roundDouble(dbService.getAverageTimePerDay(), HOURS_ROUND_MULTIPLIER)
-        setTextViewText(binding.globalStatsAvgTimePerDay, averageTimePerDay)
+        setTextViewText(binding.globalStatsAvgTimePerDay, doubleHoursToHoursAndMinutes(averageTimePerDay))
 
         val averageTimePerWeek = roundDouble(dbService.getAverageTimePerWeek(), HOURS_ROUND_MULTIPLIER)
-        setTextViewText(binding.globalStatsAvgTimePerWeek, averageTimePerWeek)
+        setTextViewText(binding.globalStatsAvgTimePerWeek, doubleHoursToHoursAndMinutes(averageTimePerWeek))
 
         val averageTimePerMonth = roundDouble(dbService.getAverageTimePerMonth(), HOURS_ROUND_MULTIPLIER)
-        setTextViewText(binding.globalStatsAvgTimePerMonth, averageTimePerMonth)
+        setTextViewText(binding.globalStatsAvgTimePerMonth, doubleHoursToHoursAndMinutes(averageTimePerMonth))
 
         val averageTimePerYear = roundDouble(dbService.getAverageTimePerYear(), HOURS_ROUND_MULTIPLIER)
-        setTextViewText(binding.globalStatsAvgTimePerYear, averageTimePerYear)
+        setTextViewText(binding.globalStatsAvgTimePerYear, doubleHoursToHoursAndMinutes(averageTimePerYear))
 
         val timeWithinLastWeek = roundDouble(dbService.getTimeWithinLastWeek(), HOURS_ROUND_MULTIPLIER)
-        setTextViewText(binding.globalStatsTimeWithinLastWeek, timeWithinLastWeek)
+        setTextViewText(binding.globalStatsTimeWithinLastWeek, doubleHoursToHoursAndMinutes(timeWithinLastWeek))
 
         val timeThisMonth = roundDouble(dbService.getTimeThisMonth(), HOURS_ROUND_MULTIPLIER)
-        setTextViewText(binding.globalStatsTimeThisMonth, timeThisMonth)
+        setTextViewText(binding.globalStatsTimeThisMonth, doubleHoursToHoursAndMinutes(timeThisMonth))
 
         val timeThisYear = roundDouble(dbService.getTimeThisYear(), HOURS_ROUND_MULTIPLIER)
-        setTextViewText(binding.globalStatsTimeThisYear, timeThisYear)
+        setTextViewText(binding.globalStatsTimeThisYear, doubleHoursToHoursAndMinutes(timeThisYear))
     }
 
 
@@ -125,10 +125,11 @@ class GlobalStatsPlaceholderFragment: Fragment() {
         }
     }
 
-    private fun setTextViewText(textView: TextView, value: Double){
+    private fun setTextViewText(textView: TextView, hourMinutePair: Pair<Int, Int>){
         textView.text = String.format(
-            requireContext().getString(R.string.hours_placeholder),
-            value
+            requireContext().getString(R.string.hours_and_minutes_placeholder),
+            hourMinutePair.first,
+            hourMinutePair.second
         )
     }
 }

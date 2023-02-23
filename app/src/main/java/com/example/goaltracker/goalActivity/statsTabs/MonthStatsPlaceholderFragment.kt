@@ -40,22 +40,28 @@ class MonthStatsPlaceholderFragment(val goalID: Long): Fragment() {
     fun updateViews(){
         val dbService = GoalStatsDatabaseService(requireContext(), goalID)
 
-        val monthTime = roundDouble(dbService.getGoalTimeThisMonth(), HOURS_ROUND_MULTIPLIER)
+        val monthTime = dbService.getGoalTimeThisMonth()
+        val monthTimeValue = doubleHoursToHoursAndMinutes(dbService.getGoalTimeThisMonth())
         val avgExpected = roundDouble(dbService.getGoalExpectedMonthTime(), HOURS_ROUND_MULTIPLIER)
         binding.goalStatsDuration.text = String.format(
-            requireContext().getString(R.string.hours_placeholder),
-            monthTime
+            requireContext().getString(R.string.hours_and_minutes_placeholder),
+            monthTimeValue.first,
+            monthTimeValue.second
         )
+        val avgExpectedValue = if(avgExpected > 0.0) doubleHoursToHoursAndMinutes(avgExpected) else Pair(0,0)
         binding.goalStatsAverageToReachGoal.text = String.format(
-            requireContext().getString(R.string.hours_placeholder),
-            if(avgExpected > 0.0) avgExpected else 0.0
+            requireContext().getString(R.string.hours_and_minutes_placeholder),
+            avgExpectedValue.first,
+            avgExpectedValue.second
         )
+
         binding.goalStatsProgress.text = if(monthTime != 0.0) roundDouble((monthTime/avgExpected) * 100, PERCENTAGE_ROUND_MULTIPLIER).toString() else "0.0"
 
-        val monthlyAverage = dbService.getGoalAverageMonthlyTime()
+        val monthlyAverage = doubleHoursToHoursAndMinutes(dbService.getGoalAverageMonthlyTime())
         binding.goalStatsAverage.text = String.format(
-            requireContext().getString(R.string.hours_placeholder),
-            monthlyAverage
+            requireContext().getString(R.string.hours_and_minutes_placeholder),
+            monthlyAverage.first,
+            monthlyAverage.second
         )
 
         val monthStartCalendar = setCalendarToDayStart(Calendar.getInstance())

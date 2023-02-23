@@ -1,9 +1,9 @@
 <resources>
-    <string name="goal_time_amount_placeholder">%1$sh</string>
     <string name="time_below_expected_label">time below expected</string>
     <string name="goal_time_left_placeholder">%1$sd %2$sh %3$smin</string>
     <string name="goal_percentage_completed_placeholder">%1$s</string>
     <string name="hours_placeholder">%1$sh</string>
+    <string name="hours_and_minutes_placeholder">%1$sh %2$smin</string>
     <string name="edit_goal_appbar_label">Edit %1$s</string>
 
     <string name="app_name">GoalTracker</string>

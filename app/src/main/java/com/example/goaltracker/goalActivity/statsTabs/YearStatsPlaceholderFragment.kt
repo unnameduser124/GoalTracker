@@ -38,39 +38,64 @@ class YearStatsPlaceholderFragment(val goalID: Long): Fragment() {
 
      fun updateViews() {
 
-        val dbService = GoalStatsDatabaseService(requireContext(), goalID)
+         val dbService = GoalStatsDatabaseService(requireContext(), goalID)
 
-        val yearTime = roundDouble(dbService.getGoalTimeThisYear(), HOURS_ROUND_MULTIPLIER)
-        val avgExpected = roundDouble(dbService.getGoalExpectedYearTime(), HOURS_ROUND_MULTIPLIER)
-        binding.goalStatsDuration.text = String.format(
-            requireContext().getString(R.string.hours_placeholder),
-            yearTime
-        )
-        binding.goalStatsAverageToReachGoal.text = String.format(
-            requireContext().getString(R.string.hours_placeholder),
-            if(avgExpected > 0.0) avgExpected else 0.0
-        )
-        binding.goalStatsProgress.text = if(yearTime != 0.0) roundDouble((yearTime/avgExpected) * 100, PERCENTAGE_ROUND_MULTIPLIER).toString() else "0.0"
+         val yearTime = roundDouble(dbService.getGoalTimeThisYear(), HOURS_ROUND_MULTIPLIER)
+         val yearTimeValue = doubleHoursToHoursAndMinutes(yearTime)
+         val avgExpected = roundDouble(dbService.getGoalExpectedYearTime(), HOURS_ROUND_MULTIPLIER)
+         binding.goalStatsDuration.text = String.format(
+             requireContext().getString(R.string.hours_and_minutes_placeholder),
+             yearTimeValue.first,
+             yearTimeValue.second
+         )
 
-        val yearAverage = dbService.getGoalAverageYearlyTime()
-        binding.goalStatsAverage.text = String.format(
-            requireContext().getString(R.string.hours_placeholder),
-            yearAverage
-        )
+         val avgExpectedValue =  if (avgExpected > 0.0) doubleHoursToHoursAndMinutes(avgExpected) else Pair(0,0)
+         binding.goalStatsAverageToReachGoal.text = String.format(
+             requireContext().getString(R.string.hours_and_minutes_placeholder),
+             avgExpectedValue.first,
+             avgExpectedValue.second
+         )
+
+         binding.goalStatsProgress.text = if (yearTime != 0.0) roundDouble(
+             (yearTime / avgExpected) * 100,
+             PERCENTAGE_ROUND_MULTIPLIER
+         ).toString() else "0.0"
+
+         val yearAverage = doubleHoursToHoursAndMinutes(dbService.getGoalAverageYearlyTime())
+         binding.goalStatsAverage.text = String.format(
+             requireContext().getString(R.string.hours_and_minutes_placeholder),
+             yearAverage.first,
+             yearAverage.second
+         )
 
 
          val yearStartCalendar = setCalendarToDayStart(Calendar.getInstance())
-         yearStartCalendar.set(Calendar.DAY_OF_YEAR, yearStartCalendar.getActualMinimum(Calendar.DAY_OF_YEAR))
+         yearStartCalendar.set(
+             Calendar.DAY_OF_YEAR,
+             yearStartCalendar.getActualMinimum(Calendar.DAY_OF_YEAR)
+         )
          val yearEndCalendar = setCalendarToDayStart(Calendar.getInstance())
-         yearEndCalendar.set(Calendar.DAY_OF_YEAR, yearEndCalendar.getActualMaximum(Calendar.DAY_OF_YEAR))
+         yearEndCalendar.set(
+             Calendar.DAY_OF_YEAR,
+             yearEndCalendar.getActualMaximum(Calendar.DAY_OF_YEAR)
+         )
 
-         val data = SessionDatabaseService(requireContext()).getDailyDurationList(yearStartCalendar.timeInMillis, yearEndCalendar.timeInMillis, goalID)
+         val data = SessionDatabaseService(requireContext()).getDailyDurationList(
+             yearStartCalendar.timeInMillis,
+             yearEndCalendar.timeInMillis,
+             goalID
+         )
          val weeklyData = getWeeklyAverageList(data)
-         weeklyData.forEach{
+         weeklyData.forEach {
              println(it.second)
          }
 
-         makeLineChart(binding.goalStatsTimeChart, weeklyData, requireContext(), DurationPeriod.ThisYear)
+         makeLineChart(
+             binding.goalStatsTimeChart,
+             weeklyData,
+             requireContext(),
+             DurationPeriod.ThisYear
+         )
     }
 
     private fun getWeeklyAverageList(data: List<Pair<Calendar, Double>>): MutableList<Pair<Calendar, Double>>{
