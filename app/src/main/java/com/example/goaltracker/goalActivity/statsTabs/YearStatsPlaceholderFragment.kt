@@ -90,6 +90,8 @@ class YearStatsPlaceholderFragment(val goalID: Long): Fragment() {
              println(it.second)
          }
 
+         binding.goalStatsChartLabel.text = requireContext().getString(R.string.year_chart_label)
+
          makeLineChart(
              binding.goalStatsTimeChart,
              weeklyData,

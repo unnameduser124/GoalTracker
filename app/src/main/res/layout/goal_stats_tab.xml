@@ -80,6 +80,15 @@
         android:textAlignment="center"
         android:textSize = "25sp"/>
 
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id = "@+id/goal_stats_chart_label"
+        app:layout_constraintTop_toBottomOf="@id/goal_stats_average_to_reach_goal"
+        tools:text = "time weekly"
+        android:textAlignment = "center"
+        android:layout_marginTop="10dp"/>
+
     <com.github.mikephil.charting.charts.LineChart
         android:layout_width="match_parent"
         android:layout_height="0dp"

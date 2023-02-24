@@ -24,6 +24,13 @@ class AddActivity: AppCompatActivity() {
             setDeadlineMinDate()
         }
 
+        binding.addGoalHourPicker.minValue = 0
+        binding.addGoalHourPicker.maxValue = 100000
+        binding.addGoalHourPicker.wrapSelectorWheel = false
+        binding.addGoalMinutePicker.minValue = 0
+        binding.addGoalMinutePicker.maxValue = 59
+        binding.addGoalMinutePicker.wrapSelectorWheel = true
+
         binding.addGoalButton.setOnClickListener {
             if(checkFieldInput()){
                 val goal = createGoalFromFields()
@@ -41,11 +48,11 @@ class AddActivity: AppCompatActivity() {
 
     private fun createGoalFromFields(): TimeGoal{
         val name = binding.addGoalNameInput.text.toString()
-        val timeAmount = binding.addGoalTimeAmountInput.text.toString().toDouble()
+        val timeAmount = binding.addGoalHourPicker.value.toDouble() + binding.addGoalMinutePicker.value.toDouble()/60.0
         var startTime = calendarFromDatePicker(binding.addGoalStartDate)
         startTime = setCalendarToDayStart(startTime)
         var deadline = calendarFromDatePicker(binding.addGoalDeadlineDate)
-        deadline = setCalendarToDayStart(deadline)
+        deadline = setCalendarToDayEnd(deadline)
 
         return TimeGoal(-1, name, timeAmount, startTime, deadline)
     }
@@ -54,7 +61,9 @@ class AddActivity: AppCompatActivity() {
         return if(binding.addGoalNameInput.text.toString() == "" || binding.addGoalNameInput.text.toString() == " "){
             false
         }
-        else binding.addGoalTimeAmountInput.text.toString() != " " && binding.addGoalTimeAmountInput.text.toString() != "" && binding.addGoalTimeAmountInput.text.toString().toDouble() != 0.0
+        else {
+            binding.addGoalHourPicker.value.toDouble() + binding.addGoalMinutePicker.value.toDouble()/60.0 != 0.0
+        }
     }
 
     private fun calendarFromDatePicker(datePicker: DatePicker): Calendar {

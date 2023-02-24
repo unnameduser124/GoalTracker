@@ -71,6 +71,8 @@ class MonthStatsPlaceholderFragment(val goalID: Long): Fragment() {
 
         val data = SessionDatabaseService(requireContext()).getDailyDurationList(monthStartCalendar.timeInMillis, monthEndCalendar.timeInMillis, goalID)
 
+        binding.goalStatsChartLabel.text = requireContext().getString(R.string.month_chart_label)
+
         makeLineChart(binding.goalStatsTimeChart, data, requireContext(), DurationPeriod.ThisMonth)
 
     }

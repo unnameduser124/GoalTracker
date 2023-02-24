@@ -25,13 +25,6 @@ class TimeGoal(
         goalTimeAmount = data.goalTimeAmount
     }
 
-    init {
-        startTime.set(Calendar.HOUR_OF_DAY, 0)
-        startTime.set(Calendar.MINUTE, 0)
-        deadline.set(Calendar.HOUR_OF_DAY, 0)
-        deadline.set(Calendar.MINUTE, 0)
-    }
-
     fun getEntriesForMonth(month: Calendar): List<GoalSession> {
         return goalSessions.filter {
             it.date.get(Calendar.MONTH) == month.get(Calendar.MONTH)

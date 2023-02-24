@@ -9,7 +9,6 @@ import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.allViews
 import androidx.viewpager.widget.ViewPager
 import com.example.goaltracker.*
 import com.example.goaltracker.database.SessionDatabaseService
@@ -69,12 +68,21 @@ class GoalActivity: AppCompatActivity() {
             popupWindow.showAtLocation(it, Gravity.CENTER, 0, 0)
             popupWindow.contentView = popupBinding.root
 
+
+            popupBinding.addSessionHourPicker.minValue = 0
+            popupBinding.addSessionHourPicker.maxValue = 100000
+            popupBinding.addSessionHourPicker.wrapSelectorWheel = false
+            popupBinding.addSessionMinutePicker.minValue = 0
+            popupBinding.addSessionMinutePicker.maxValue = 59
+            popupBinding.addSessionMinutePicker.wrapSelectorWheel = true
+
             popupBinding.sessionConfirmButton.setOnClickListener {
-                if(popupBinding.valueInput.text.toString()!="" 
-                    && popupBinding.valueInput.text.toString().toDouble()!=0.0){
-                    val time = popupBinding.valueInput.text.toString().toDouble()
+
+                val timeValue = popupBinding.addSessionHourPicker.value.toDouble() + popupBinding.addSessionMinutePicker.value.toDouble()/60.0
+
+                if(timeValue!=0.0){
                     val date = setCalendarToDayStart(calendarFromDatePicker(popupBinding.sessionDatePicker))
-                    val session = GoalSession(-1, date, time, goal.ID)
+                    val session = GoalSession(-1, date, timeValue, goal.ID)
                     sessionDatabaseService.addSession(session)
                     updateViews(goal)
                 }
@@ -127,14 +135,10 @@ class GoalActivity: AppCompatActivity() {
         val totalTime = doubleHoursToHoursAndMinutes(goal.goalTimeAmount)
         binding.goalTimeAmount.text = String.format(getString(R.string.hours_and_minutes_placeholder), totalTime.first, totalTime.second)
         val currentTime = doubleHoursToHoursAndMinutes(goal.getCurrentTimeAmount(this))
+
+        val timeLeftList = calculateTimeLeft(goal)
         binding.currentTimeAmount.text = String.format(getString(R.string.hours_and_minutes_placeholder), currentTime.first, currentTime.second)
-        var timeLeftInSeconds = (goal.deadline.timeInMillis - Calendar.getInstance().timeInMillis)/1000
-        val daysLeft = floor(timeLeftInSeconds / SECONDS_IN_DAY).toLong()
-        timeLeftInSeconds -= (daysLeft * com.example.goaltracker.SECONDS_IN_DAY).toLong()
-        val hoursLeft = floor(timeLeftInSeconds/ SECONDS_IN_HOUR).toLong()
-        timeLeftInSeconds -= (hoursLeft * com.example.goaltracker.SECONDS_IN_HOUR).toLong()
-        val minutesLeft = floor(timeLeftInSeconds/ SECONDS_IN_MINUTE).toLong() + 1
-        binding.goalTimeLeft.text = String.format(getString(R.string.goal_time_left_placeholder), daysLeft, hoursLeft, minutesLeft)
+        binding.goalTimeLeft.text = String.format(getString(R.string.goal_time_left_placeholder), timeLeftList[0], timeLeftList[1], timeLeftList[2])
 
         binding.goalPercentageCompleted.text = String.format(
             getString(R.string.goal_percentage_completed_placeholder),
@@ -174,6 +178,17 @@ class GoalActivity: AppCompatActivity() {
         val tabs: TabLayout = binding.goalStatsTabLayout
         tabs.setupWithViewPager(viewPager)
 
+    }
+
+    private fun calculateTimeLeft(goal: TimeGoal): List<Long>{
+        var timeLeftInSeconds = (goal.deadline.timeInMillis - Calendar.getInstance().timeInMillis)/1000
+        val daysLeft = floor(timeLeftInSeconds / SECONDS_IN_DAY).toLong()
+        timeLeftInSeconds -= (daysLeft * SECONDS_IN_DAY).toLong()
+        val hoursLeft = floor(timeLeftInSeconds/ SECONDS_IN_HOUR).toLong()
+        timeLeftInSeconds -= (hoursLeft * SECONDS_IN_HOUR).toLong()
+        val minutesLeft = floor(timeLeftInSeconds / SECONDS_IN_MINUTE).toLong() + 1
+
+        return listOf(daysLeft, hoursLeft, minutesLeft)
     }
 
 

@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/goal_item_gray"
+    android:padding="10dp"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
@@ -30,36 +31,54 @@
         android:layout_marginStart="50dp"
         android:layout_marginEnd="50dp"/>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="0dp"
+    <NumberPicker
+        android:layout_width = "100dp"
+        android:layout_height = "120dp"
+        android:id = "@+id/add_session_hour_picker"
+        android:layout_margin="10dp"
+        app:layout_constraintStart_toStartOf = "parent"
+        app:layout_constraintEnd_toStartOf = "@id/add_session_minute_picker"
+        app:layout_constraintTop_toBottomOf = "@id/session_date_picker"/>
+
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id = "@+id/value_input_layout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/session_date_picker"
-        app:layout_constraintEnd_toStartOf="@id/session_confirm_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="30dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="20dp">
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id = "@+id/value_input"
-            android:textSize="20sp"
-            android:inputType="numberDecimal"
-            android:hint = "@string/time_in_hours_label"/>
-    </com.google.android.material.textfield.TextInputLayout>
+        android:text = "@string/hours_shortcut_label"
+        app:layout_constraintStart_toEndOf="@id/add_session_hour_picker"
+        app:layout_constraintTop_toTopOf="@id/add_session_hour_picker"
+        app:layout_constraintBottom_toBottomOf="@id/add_session_hour_picker"
+        android:textSize = "20sp"
+        android:layout_marginStart="10dp"/>
+
+    <NumberPicker
+        android:layout_width = "100dp"
+        android:layout_height = "120dp"
+        android:id = "@+id/add_session_minute_picker"
+        android:layout_margin="10dp"
+        app:layout_constraintStart_toEndOf = "@id/add_session_hour_picker"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf = "@id/session_date_picker"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text = "@string/minutes_shortcut_label"
+        app:layout_constraintStart_toEndOf="@id/add_session_minute_picker"
+        app:layout_constraintTop_toTopOf="@id/add_session_minute_picker"
+        app:layout_constraintBottom_toBottomOf="@id/add_session_minute_picker"
+        android:textSize = "20sp"
+        android:layout_marginStart="10dp"/>
 
     <com.google.android.material.button.MaterialButton
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:id = "@+id/session_confirm_button"
-        app:layout_constraintStart_toEndOf="@id/value_input_layout"
-        app:layout_constraintTop_toTopOf="@id/value_input_layout"
-        app:layout_constraintBottom_toBottomOf="@id/value_input_layout"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/add_session_hour_picker"
         android:text = "@string/add_button_label"
-        android:layout_marginEnd="30dp"/>
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="15dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

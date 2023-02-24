@@ -21,6 +21,7 @@
     <string name="goal_name_label">goal name</string>
     <string name="goal_start_date_label">start date</string>
     <string name="deadline_date_label">deadline</string>
+    <string name="year_chart_label">time weekly</string>
 
     <string name="time_in_hours_label">time in hours</string>
     <string name="add_session_label">Add session</string>
@@ -44,4 +45,7 @@
     <string name="save_changes_button_label">save changes</string>
     <string name="delete_button_label">delete</string>
     <string name="last_30_days_chart_label">last 30 days</string>
+    <string name="hours_shortcut_label">h</string>
+    <string name="minutes_shortcut_label">min</string>
+    <string name="month_chart_label">time daily</string>
 </resources>
