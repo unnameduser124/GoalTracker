@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/goal_item_gray"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id = "@+id/confirm_popup_question"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text = "@string/confirm_popup_question"
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id = "@+id/confirm_popup_yes_button"
+        app:layout_constraintTop_toBottomOf="@id/confirm_popup_question"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/confirm_popup_no_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text = "@string/yes_button_label"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="20dp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id = "@+id/confirm_popup_no_button"
+        app:layout_constraintTop_toBottomOf="@id/confirm_popup_question"
+        app:layout_constraintStart_toEndOf="@id/confirm_popup_yes_button"
+        app:layout_constraintEnd_toEndOf ="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text = "@string/no_button_label"
+        android:backgroundTint="@color/delete_red"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="50dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="50dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

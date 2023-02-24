@@ -1,11 +1,17 @@
 package com.example.goaltracker
 
+import android.app.ActionBar.LayoutParams
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import android.widget.DatePicker
+import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.goaltracker.database.TimeGoalDatabaseService
+import com.example.goaltracker.databinding.ConfirmPopupBinding
 import com.example.goaltracker.databinding.TimeGoalEditLayoutBinding
 import com.example.goaltracker.goal.TimeGoal
 import com.example.goaltracker.goalActivity.GoalActivity
@@ -75,11 +81,27 @@ class EditActivity: AppCompatActivity() {
         }
 
         binding.deleteGoalButton.setOnClickListener {
-            val dbService = TimeGoalDatabaseService(this)
-            dbService.deleteGoalByID(goalID)
-            val intent = Intent(this, MainActivity::class.java)
-            finishAffinity()
-            startActivity(intent)
+            val popupBinding = ConfirmPopupBinding.inflate(layoutInflater)
+            val width = LayoutParams.WRAP_CONTENT
+            val height = LayoutParams.WRAP_CONTENT
+            val focusable = true
+
+            val popupWindow = PopupWindow(popupBinding.root, width, height, focusable)
+            popupWindow.showAtLocation(binding.deleteGoalButton, Gravity.CENTER, 0, 0)
+            popupWindow.contentView = popupBinding.root
+
+            popupBinding.confirmPopupYesButton.setOnClickListener {
+                val dbService = TimeGoalDatabaseService(this)
+                dbService.deleteGoalByID(goalID)
+                val intent = Intent(this, MainActivity::class.java)
+                finishAffinity()
+                startActivity(intent)
+            }
+
+            popupBinding.confirmPopupNoButton.setOnClickListener{
+                popupWindow.dismiss()
+            }
+
         }
 
     }

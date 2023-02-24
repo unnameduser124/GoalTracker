@@ -48,4 +48,7 @@
     <string name="hours_shortcut_label">h</string>
     <string name="minutes_shortcut_label">min</string>
     <string name="month_chart_label">time daily</string>
+    <string name="confirm_popup_question">Are you sure?</string>
+    <string name="no_button_label">no</string>
+    <string name="yes_button_label">yes</string>
 </resources>
