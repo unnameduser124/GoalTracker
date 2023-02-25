@@ -3,6 +3,9 @@ package com.example.goaltracker.database
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.example.goaltracker.database.GoalDatabaseConstants.CLEAR_COUNTDOWN_GOAL_TABLE_DATA
+import com.example.goaltracker.database.GoalDatabaseConstants.CLEAR_SESSION_TABLE_DATA
+import com.example.goaltracker.database.GoalDatabaseConstants.CLEAR_TIME_GOAL_TABLE_DATA
 import com.example.goaltracker.database.GoalDatabaseConstants.CREATE_COUNTDOWN_GOAL_TABLE_QUERY
 import com.example.goaltracker.database.GoalDatabaseConstants.CREATE_SESSION_TABLE_QUERY
 import com.example.goaltracker.database.GoalDatabaseConstants.CREATE_TIME_GOAL_TABLE_QUERY
@@ -17,5 +20,13 @@ open class GoalDatabase(context: Context): SQLiteOpenHelper(context, DATABASE_NA
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) { }
+
+    fun clearData(){
+        val db = this.writableDatabase
+
+        db.execSQL(CLEAR_COUNTDOWN_GOAL_TABLE_DATA)
+        db.execSQL(CLEAR_TIME_GOAL_TABLE_DATA)
+        db.execSQL(CLEAR_SESSION_TABLE_DATA)
+    }
 
 }

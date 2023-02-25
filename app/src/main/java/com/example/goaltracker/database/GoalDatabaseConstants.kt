@@ -24,6 +24,10 @@ object GoalDatabaseConstants {
             "${SessionTable.GOAL_ID} INTEGER NOT NULL," +
             "${SessionTable.TIME_AMOUNT} REAL NOT NULL)"
 
+    const val CLEAR_SESSION_TABLE_DATA = "DELETE FROM ${SessionTable.TABLE_NAME}"
+    const val CLEAR_TIME_GOAL_TABLE_DATA = "DELETE FROM ${TimeGoalTable.TABLE_NAME}"
+    const val CLEAR_COUNTDOWN_GOAL_TABLE_DATA = "DELETE FROM ${CountdownGoalTable.TABLE_NAME}"
+
     object CountdownGoalTable: BaseColumns{
         const val TABLE_NAME = "CountdownGoals"
         const val GOAL_NAME = "goalName"

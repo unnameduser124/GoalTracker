@@ -1,5 +1,6 @@
 package com.example.goaltracker
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.viewpager.widget.ViewPager
@@ -21,5 +22,11 @@ class MainActivity : AppCompatActivity() {
         viewPager.adapter = sectionPageAdapter
         val tabs: TabLayout =findViewById(R.id.tabs)
         tabs.setupWithViewPager(viewPager)
+
+        binding.settingsButton.setOnClickListener{
+            val intent = Intent(this, SettingsActivity::class.java)
+            finish()
+            startActivity(intent)
+        }
     }
 }

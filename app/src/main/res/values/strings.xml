@@ -51,4 +51,6 @@
     <string name="confirm_popup_question">Are you sure?</string>
     <string name="no_button_label">no</string>
     <string name="yes_button_label">yes</string>
+    <string name="settings_appbar_label">Settings</string>
+    <string name="clear_all_data_button_label">Clear all data</string>
 </resources>
