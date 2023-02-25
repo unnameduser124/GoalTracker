@@ -73,6 +73,7 @@ class MonthStatsPlaceholderFragment(val goalID: Long): Fragment() {
 
         binding.goalStatsChartLabel.text = requireContext().getString(R.string.month_chart_label)
 
+        binding.goalStatsTimeChart.clear()
         makeLineChart(binding.goalStatsTimeChart, data, requireContext(), DurationPeriod.ThisMonth)
 
     }

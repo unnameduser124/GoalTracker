@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.goaltracker.R
 import com.example.goaltracker.database.SessionDatabaseService
+import com.example.goaltracker.doubleHoursToHoursAndMinutes
 import com.example.goaltracker.goal.GoalSession
 import java.text.SimpleDateFormat
 import java.util.*
@@ -32,9 +33,12 @@ class SessionListItemAdapter(private val dataset: MutableList<GoalSession>,
         val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.ROOT)
         val date = sdf.format(session.date.time)
         holder.sessionDate.text = date
+
+        val timeAmount = doubleHoursToHoursAndMinutes(session.timeAmount)
         holder.sessionTimeAmount.text = String.format(
-            holder.sessionTimeAmount.context.getString(R.string.hours_placeholder),
-            session.timeAmount
+            holder.sessionTimeAmount.context.getString(R.string.hours_and_minutes_placeholder),
+            timeAmount.first,
+            timeAmount.second
         )
         holder.deleteButton.setOnClickListener {
             val dbService = SessionDatabaseService(holder.deleteButton.context)

@@ -86,12 +86,10 @@ class YearStatsPlaceholderFragment(val goalID: Long): Fragment() {
              goalID
          )
          val weeklyData = getWeeklyAverageList(data)
-         weeklyData.forEach {
-             println(it.second)
-         }
 
          binding.goalStatsChartLabel.text = requireContext().getString(R.string.year_chart_label)
 
+         binding.goalStatsTimeChart.clear()
          makeLineChart(
              binding.goalStatsTimeChart,
              weeklyData,

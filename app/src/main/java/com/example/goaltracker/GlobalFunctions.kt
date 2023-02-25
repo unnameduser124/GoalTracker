@@ -152,14 +152,6 @@ fun makeBarChart(chart: BarChart, data: List<Pair<Calendar, Double>>, context: C
     chart.setDrawGridBackground(false)
     chart.description.isEnabled = false
 
-    chart.setOnChartValueSelectedListener(object: OnChartValueSelectedListener {
-        override fun onValueSelected(e: Entry?, h: Highlight?) {
-            Toast.makeText(context, e?.y.toString(), Toast.LENGTH_SHORT).show()
-        }
-
-        override fun onNothingSelected() {
-        }
-    })
 
     val formatter = SimpleDateFormat("MMM dd", Locale.US)
     chart.xAxis.valueFormatter = object : ValueFormatter() {

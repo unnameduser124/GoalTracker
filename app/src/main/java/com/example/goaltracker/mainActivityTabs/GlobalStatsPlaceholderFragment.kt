@@ -1,6 +1,5 @@
 package com.example.goaltracker.mainActivityTabs
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,17 +13,9 @@ import com.example.goaltracker.database.GlobalStatsDatabaseService
 import com.example.goaltracker.database.SessionDatabaseService
 import com.example.goaltracker.database.TimeGoalDatabaseService
 import com.example.goaltracker.databinding.GlobalStatisticsTabBinding
-import com.github.mikephil.charting.charts.BarChart
-import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.*
-import com.github.mikephil.charting.formatter.ValueFormatter
+import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
-import com.github.mikephil.charting.utils.ColorTemplate
-import java.text.SimpleDateFormat
 import java.util.*
 
 class GlobalStatsPlaceholderFragment: Fragment() {
@@ -33,7 +24,7 @@ class GlobalStatsPlaceholderFragment: Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         pageViewModel = ViewModelProvider(this).get(PageViewModel::class.java).apply {
-            setIndex(arguments?.getInt(GlobalStatsPlaceholderFragment.SECTION_NUMBER) ?: 1)
+            setIndex(arguments?.getInt(SECTION_NUMBER) ?: 1)
         }
     }
 
@@ -58,6 +49,23 @@ class GlobalStatsPlaceholderFragment: Fragment() {
             requireContext(),
             DurationPeriod.Month
         )
+
+        binding.globalStatsTimeChart.setOnChartValueSelectedListener(object: OnChartValueSelectedListener {
+            override fun onValueSelected(e: Entry?, h: Highlight?) {
+                if(e?.y != null){
+                    val hoursAndMinutes = doubleHoursToHoursAndMinutes(e.y.toDouble())
+                    val timeString = String.format(
+                        requireContext().getString(R.string.hours_and_minutes_placeholder),
+                        hoursAndMinutes.first,
+                        hoursAndMinutes.second
+                    )
+                    Toast.makeText(context, timeString, Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onNothingSelected() {
+            }
+        })
 
         return binding.root
     }
