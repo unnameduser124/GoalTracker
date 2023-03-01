@@ -9,7 +9,7 @@ private val TAB_TITLES = arrayOf(
     "Stats"
 )
 
-class SectionAdapterMain(fragmentManager: FragmentManager): FragmentPagerAdapter(fragmentManager){
+class SectionAdapterMain(fragmentManager: FragmentManager): FragmentPagerAdapter(fragmentManager){//replace viewPager with viewPager2 in the future
     override fun getItem(position: Int): Fragment {
         return if(position==0){
             HomePlaceholderFragment.newInstance(position)

@@ -20,7 +20,7 @@ class YearStatsPlaceholderFragment(val goalID: Long): Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         pageViewModel = ViewModelProvider(this)[GoalActivityPageViewModel::class.java].apply {
-            setIndex(arguments?.getInt(YearStatsPlaceholderFragment.SECTION_NUMBER) ?: 1)
+            setIndex(arguments?.getInt(SECTION_NUMBER) ?: 1)
         }
     }
 
@@ -42,18 +42,18 @@ class YearStatsPlaceholderFragment(val goalID: Long): Fragment() {
 
          val yearTime = roundDouble(dbService.getGoalTimeThisYear(), HOURS_ROUND_MULTIPLIER)
          val yearTimeValue = doubleHoursToHoursAndMinutes(yearTime)
-         val avgExpected = roundDouble(dbService.getGoalExpectedYearTime(), HOURS_ROUND_MULTIPLIER)
          binding.goalStatsDuration.text = String.format(
              requireContext().getString(R.string.hours_and_minutes_placeholder),
              yearTimeValue.first,
              yearTimeValue.second
          )
 
-         val avgExpectedValue =  if (avgExpected > 0.0) doubleHoursToHoursAndMinutes(avgExpected) else Pair(0,0)
+         val avgExpected = roundDouble(dbService.getGoalExpectedYearTime(), HOURS_ROUND_MULTIPLIER)
+         val avgExpectedHoursAndMinutes =  if (avgExpected > 0.0) doubleHoursToHoursAndMinutes(avgExpected) else Pair(0,0)
          binding.goalStatsAverageToReachGoal.text = String.format(
              requireContext().getString(R.string.hours_and_minutes_placeholder),
-             avgExpectedValue.first,
-             avgExpectedValue.second
+             avgExpectedHoursAndMinutes.first,
+             avgExpectedHoursAndMinutes.second
          )
 
          binding.goalStatsProgress.text = if (yearTime != 0.0) roundDouble(
@@ -85,7 +85,7 @@ class YearStatsPlaceholderFragment(val goalID: Long): Fragment() {
              yearEndCalendar.timeInMillis,
              goalID
          )
-         val weeklyData = getWeeklyAverageList(data)
+         val weeklyData = getWeeklyTimeList(data)
 
          binding.goalStatsChartLabel.text = requireContext().getString(R.string.year_chart_label)
 
@@ -98,7 +98,7 @@ class YearStatsPlaceholderFragment(val goalID: Long): Fragment() {
          )
     }
 
-    private fun getWeeklyAverageList(data: List<Pair<Calendar, Double>>): MutableList<Pair<Calendar, Double>>{
+    private fun getWeeklyTimeList(data: List<Pair<Calendar, Double>>): MutableList<Pair<Calendar, Double>>{
         val weeksList = mutableListOf<Pair<Calendar, Double>>()
 
         data.forEach {pair ->
@@ -108,7 +108,7 @@ class YearStatsPlaceholderFragment(val goalID: Long): Fragment() {
                 weeksList.add(pair)
             }
             else{
-                val newPair = existingWeek.copy(second = existingWeek.second+pair.second)
+                val newPair = existingWeek.copy(second = existingWeek.second + pair.second)
                 weeksList[weeksList.indexOf(existingWeek)] = newPair
             }
         }

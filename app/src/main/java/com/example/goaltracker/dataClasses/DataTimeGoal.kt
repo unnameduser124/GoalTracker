@@ -7,8 +7,10 @@ data class DataTimeGoal(val goalID: Long,
                         var goalTimeAmount: Double,
                         var startTime: Long,
                         var deadline: Long){
-    constructor(goal: TimeGoal): this(goal.ID, goal.name, goal.goalTimeAmount,  -1L, 1L){
-        startTime = goal.startTime.timeInMillis
-        deadline = goal.deadline.timeInMillis
-    }
+    constructor(goal: TimeGoal): this(goal.ID,
+        goal.name,
+        goal.goalTimeAmount,
+        goal.startTime.timeInMillis,
+        goal.deadline.timeInMillis
+    )
 }

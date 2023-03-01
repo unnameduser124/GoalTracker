@@ -1,31 +1,28 @@
 package com.example.goaltracker
 
-import android.app.ActionBar.LayoutParams
 import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.widget.DatePicker
-import android.widget.PopupWindow
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.goaltracker.database.TimeGoalDatabaseService
 import com.example.goaltracker.databinding.ConfirmPopupBinding
-import com.example.goaltracker.databinding.TimeGoalEditLayoutBinding
+import com.example.goaltracker.databinding.GoalEditLayoutBinding
 import com.example.goaltracker.goal.TimeGoal
 import com.example.goaltracker.goalActivity.GoalActivity
 import java.util.Calendar
 
 class EditActivity: AppCompatActivity() {
-    private lateinit var binding: TimeGoalEditLayoutBinding
+    private lateinit var binding: GoalEditLayoutBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = TimeGoalEditLayoutBinding.inflate(layoutInflater)
+        binding = GoalEditLayoutBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val goalID = intent.getLongExtra("GOAL_ID", 0)
 
+        val goalID = intent.getLongExtra("GOAL_ID", 0)
         val dataGoal = TimeGoalDatabaseService(this).getGoalByID(goalID)
         val goal: TimeGoal
         if(dataGoal!=null){
@@ -38,38 +35,14 @@ class EditActivity: AppCompatActivity() {
             return
         }
 
-        binding.appbarTextView.text = String.format(
-            getString(R.string.edit_goal_appbar_label),
-            goal.name
-        )
-
-        binding.editGoalNameInput.setText(goal.name)
-        binding.editGoalTimeAmountInput.setText(goal.goalTimeAmount.toString())
-        setDatePickerFromCalendar(goal.startTime, binding.editGoalStartDate)
-        setDatePickerFromCalendar(goal.deadline, binding.editGoalDeadlineDate)
-
-        setDeadlineMinDate()
-        binding.editGoalDeadlineDate.setOnDateChangedListener { _, _, _, _ ->
-            setDeadlineMinDate()
-        }
+        updateViews(goal)
 
         binding.editGoalButton.setOnClickListener {
             if(checkFieldInput()){
-                val newName = binding.editGoalNameInput.text.toString()
-                val newTimeAmount = binding.editGoalTimeAmountInput.text.toString()
-
-                val newStartDate = calendarFromDatePicker(binding.editGoalStartDate)
-                val newDeadlineDate = calendarFromDatePicker(binding.editGoalDeadlineDate)
-
-                goal.apply {
-                    name = newName
-                    goalTimeAmount = newTimeAmount.toDouble()
-                    startTime = newStartDate
-                    deadline = newDeadlineDate
-                }
+                val updatedGoal = createGoalFromFields()
 
                 val dbService = TimeGoalDatabaseService(this)
-                dbService.updateGoalByID(goalID, goal)
+                dbService.updateGoalByID(goalID, updatedGoal)
                 val intent = Intent(this, GoalActivity::class.java)
                 intent.putExtra("GOAL_ID", goalID)
                 finish()
@@ -82,13 +55,9 @@ class EditActivity: AppCompatActivity() {
 
         binding.deleteGoalButton.setOnClickListener {
             val popupBinding = ConfirmPopupBinding.inflate(layoutInflater)
-            val width = LayoutParams.WRAP_CONTENT
-            val height = LayoutParams.WRAP_CONTENT
-            val focusable = true
 
-            val popupWindow = PopupWindow(popupBinding.root, width, height, focusable)
+            val popupWindow = createPopupWindow(popupBinding.root)
             popupWindow.showAtLocation(binding.deleteGoalButton, Gravity.CENTER, 0, 0)
-            popupWindow.contentView = popupBinding.root
 
             popupBinding.confirmPopupYesButton.setOnClickListener {
                 val dbService = TimeGoalDatabaseService(this)
@@ -104,17 +73,63 @@ class EditActivity: AppCompatActivity() {
 
         }
 
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                val intent = Intent(this@EditActivity, GoalActivity::class.java)
+                intent.putExtra("GOAL_ID", goalID)
+                finish()
+                startActivity(intent)
+            }
+        })
+
+    }
+
+    private fun updateViews(goal: TimeGoal){
+        binding.appbarTextView.text = String.format(
+            getString(R.string.edit_goal_appbar_label),
+            goal.name
+        )
+
+        binding.editGoalNameInput.setText(goal.name)
+
+        val goalTimeAmountHoursAndMinutes = doubleHoursToHoursAndMinutes(goal.goalTimeAmount)
+        prepareNumberPicker(binding.editGoalHourPicker, 0, 100000, false, goalTimeAmountHoursAndMinutes.first)
+        prepareNumberPicker(binding.editGoalMinutePicker, 0, 59, true, goalTimeAmountHoursAndMinutes.second)
+
+        setDatePickerFromCalendar(goal.startTime, binding.editGoalStartDate)
+        setDatePickerFromCalendar(goal.deadline, binding.editGoalDeadlineDate)
+
+        setDeadlineMinDate()
+        binding.editGoalDeadlineDate.setOnDateChangedListener { _, _, _, _ ->
+            setDeadlineMinDate()
+        }
     }
 
     private fun setDatePickerFromCalendar(calendar: Calendar, datePicker: DatePicker){
-        datePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), null)
+        datePicker.init(calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH),
+            null)
+    }
+
+    private fun createGoalFromFields(): TimeGoal{
+        val name = binding.editGoalNameInput.text.toString()
+        val timeAmount = binding.editGoalHourPicker.value.toDouble() + binding.editGoalMinutePicker.value.toDouble()/60.0
+        var startTime = com.example.goaltracker.calendarFromDatePicker(binding.editGoalStartDate)
+        startTime = setCalendarToDayStart(startTime)
+        var deadline = com.example.goaltracker.calendarFromDatePicker(binding.editGoalDeadlineDate)
+        deadline = setCalendarToDayEnd(deadline)
+
+        return TimeGoal(-1, name, timeAmount, startTime, deadline)
     }
 
     private fun checkFieldInput(): Boolean{
         return if(binding.editGoalNameInput.text.toString() == "" || binding.editGoalNameInput.text.toString() == " "){
             false
         }
-        else binding.editGoalTimeAmountInput.text.toString() != " " && binding.editGoalTimeAmountInput.text.toString() != "" && binding.editGoalTimeAmountInput.text.toString().toDouble() != 0.0
+        else {
+            binding.editGoalHourPicker.value.toDouble() + binding.editGoalMinutePicker.value.toDouble()/60.0 != 0.0
+        }
     }
 
 

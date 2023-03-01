@@ -17,7 +17,6 @@ import com.example.goaltracker.databinding.AddSessionPopupBinding
 import com.example.goaltracker.databinding.GoalActivityBinding
 import com.example.goaltracker.goal.GoalSession
 import com.example.goaltracker.goal.TimeGoal
-import com.example.goaltracker.goal.getTimeDebt
 import com.example.goaltracker.goalActivity.statsTabs.DayStatsPlaceholderFragment
 import com.example.goaltracker.goalActivity.statsTabs.MonthStatsPlaceholderFragment
 import com.example.goaltracker.goalActivity.statsTabs.SectionAdapterGoalActivity
@@ -36,6 +35,7 @@ class GoalActivity: AppCompatActivity() {
         binding = GoalActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Get goal from database
         val goalID = intent.getLongExtra("GOAL_ID", 0)
         val dbService = TimeGoalDatabaseService(this)
         val dataGoal = dbService.getGoalByID(goalID)
@@ -61,20 +61,11 @@ class GoalActivity: AppCompatActivity() {
         binding.addSessionButton.setOnClickListener{
             val popupBinding = AddSessionPopupBinding.inflate(layoutInflater)
 
-            val width = WRAP_CONTENT
-            val height = WRAP_CONTENT
-
-            val popupWindow = PopupWindow(popupBinding.root, width, height, true)
+            val popupWindow = createPopupWindow(popupBinding.root)
             popupWindow.showAtLocation(it, Gravity.CENTER, 0, 0)
-            popupWindow.contentView = popupBinding.root
 
-
-            popupBinding.addSessionHourPicker.minValue = 0
-            popupBinding.addSessionHourPicker.maxValue = 100000
-            popupBinding.addSessionHourPicker.wrapSelectorWheel = false
-            popupBinding.addSessionMinutePicker.minValue = 0
-            popupBinding.addSessionMinutePicker.maxValue = 59
-            popupBinding.addSessionMinutePicker.wrapSelectorWheel = true
+            prepareNumberPicker(popupBinding.addSessionHourPicker, 0, 100000, false, 0)
+            prepareNumberPicker(popupBinding.addSessionMinutePicker, 0, 59, true, 0)
 
             popupBinding.sessionConfirmButton.setOnClickListener {
 
@@ -108,7 +99,7 @@ class GoalActivity: AppCompatActivity() {
 
         onBackPressedDispatcher.addCallback(this , object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                val intent = Intent(binding.sessionsButton.context, MainActivity::class.java)
+                val intent = Intent(this@GoalActivity, MainActivity::class.java)
                 finishAffinity()
                 startActivity(intent)
             }
@@ -116,28 +107,19 @@ class GoalActivity: AppCompatActivity() {
 
     }
 
-
-    private fun calendarFromDatePicker(datePicker: DatePicker): Calendar {
-        val calendar = Calendar.getInstance()
-        val year = datePicker.year
-        val month = datePicker.month
-        val day = datePicker.dayOfMonth
-        calendar.set(Calendar.YEAR, year)
-        calendar.set(Calendar.MONTH, month)
-        calendar.set(Calendar.DAY_OF_MONTH, day)
-        return calendar
-    }
-
     private fun updateViews(goal: TimeGoal){
+
         val simpleDateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.ROOT)
         binding.goalStartTime.text = simpleDateFormat.format(goal.startTime.time)
         binding.goalDeadline.text = simpleDateFormat.format(goal.deadline.time)
+
         val totalTime = doubleHoursToHoursAndMinutes(goal.goalTimeAmount)
         binding.goalTimeAmount.text = String.format(getString(R.string.hours_and_minutes_placeholder), totalTime.first, totalTime.second)
+
         val currentTime = doubleHoursToHoursAndMinutes(goal.getCurrentTimeAmount(this))
+        binding.currentTimeAmount.text = String.format(getString(R.string.hours_and_minutes_placeholder), currentTime.first, currentTime.second)
 
         val timeLeftList = calculateTimeLeft(goal)
-        binding.currentTimeAmount.text = String.format(getString(R.string.hours_and_minutes_placeholder), currentTime.first, currentTime.second)
         binding.goalTimeLeft.text = String.format(getString(R.string.goal_time_left_placeholder), timeLeftList[0], timeLeftList[1], timeLeftList[2])
 
         binding.goalPercentageCompleted.text = String.format(
@@ -145,9 +127,13 @@ class GoalActivity: AppCompatActivity() {
             roundDouble((goal.getCurrentTimeAmount(this)/goal.goalTimeAmount)*100, PERCENTAGE_ROUND_MULTIPLIER)
         )
 
-        val timeDebt = doubleHoursToHoursAndMinutes(getTimeDebt(goal, this))
-        binding.goalTimeDebt.text = String.format(getString(R.string.hours_and_minutes_placeholder), timeDebt.first, timeDebt.second)
+        val timeDebt = doubleHoursToHoursAndMinutes(goal.getTimeDebt(this))
+        binding.goalTimeDebt.text = String.format(
+            getString(R.string.hours_and_minutes_placeholder),
+            timeDebt.first, timeDebt.second
+        )
 
+        // Update stats tabs if they are instantiated
         try{
             val dayStatsTab = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + 0) as DayStatsPlaceholderFragment
             dayStatsTab.updateViews()
@@ -177,7 +163,6 @@ class GoalActivity: AppCompatActivity() {
         viewPager.adapter = sectionPageAdapter
         val tabs: TabLayout = binding.goalStatsTabLayout
         tabs.setupWithViewPager(viewPager)
-
     }
 
     private fun calculateTimeLeft(goal: TimeGoal): List<Long>{

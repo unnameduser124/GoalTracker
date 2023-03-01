@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.goaltracker.*
-import com.example.goaltracker.database.GlobalStatsDatabaseService
 import com.example.goaltracker.database.GoalStatsDatabaseService
 import com.example.goaltracker.database.SessionDatabaseService
 import com.example.goaltracker.databinding.GoalStatsTabBinding
@@ -21,7 +20,7 @@ class MonthStatsPlaceholderFragment(val goalID: Long): Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         pageViewModel = ViewModelProvider(this)[GoalActivityPageViewModel::class.java].apply {
-            setIndex(arguments?.getInt(MonthStatsPlaceholderFragment.SECTION_NUMBER) ?: 1)
+            setIndex(arguments?.getInt(SECTION_NUMBER) ?: 1)
         }
     }
 
@@ -48,11 +47,11 @@ class MonthStatsPlaceholderFragment(val goalID: Long): Fragment() {
             monthTimeValue.first,
             monthTimeValue.second
         )
-        val avgExpectedValue = if(avgExpected > 0.0) doubleHoursToHoursAndMinutes(avgExpected) else Pair(0,0)
+        val avgExpectedHoursAndMinutes = if(avgExpected > 0.0) doubleHoursToHoursAndMinutes(avgExpected) else Pair(0,0)
         binding.goalStatsAverageToReachGoal.text = String.format(
             requireContext().getString(R.string.hours_and_minutes_placeholder),
-            avgExpectedValue.first,
-            avgExpectedValue.second
+            avgExpectedHoursAndMinutes.first,
+            avgExpectedHoursAndMinutes.second
         )
 
         binding.goalStatsProgress.text = if(monthTime != 0.0) roundDouble((monthTime/avgExpected) * 100, PERCENTAGE_ROUND_MULTIPLIER).toString() else "0.0"
@@ -75,7 +74,6 @@ class MonthStatsPlaceholderFragment(val goalID: Long): Fragment() {
 
         binding.goalStatsTimeChart.clear()
         makeLineChart(binding.goalStatsTimeChart, data, requireContext(), DurationPeriod.ThisMonth)
-
     }
 
 

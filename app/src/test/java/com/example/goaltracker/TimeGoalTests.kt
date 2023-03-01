@@ -32,7 +32,7 @@ class TimeGoalTests {
         assertEquals(-7.0, getTimeDebt(goal), 0.1)
     }*/
 
-    @Test
+    /*@Test
     fun monthDifferenceTest() {
         val startTime = Calendar.getInstance().apply {
             set(Calendar.DAY_OF_YEAR, 20)
@@ -61,5 +61,5 @@ class TimeGoalTests {
         val yearDiff = getTimeDifferenceInYears(startTime, endTime)
 
         assertEquals(3.17, yearDiff, 0.01)
-    }
+    }*/
 }

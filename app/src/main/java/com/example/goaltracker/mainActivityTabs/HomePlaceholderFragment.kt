@@ -34,7 +34,7 @@ class HomePlaceholderFragment: Fragment() {
         val dbService = TimeGoalDatabaseService(requireContext())
         val dataset = dbService.getAllGoalNames()
 
-        val adapter = GoalListItemAdapter(dataset.toMutableList())
+        val adapter = GoalListItemAdapter(dataset)
         val layoutManager = LinearLayoutManager(requireContext())
         binding.goalListRecyclerView.layoutManager = layoutManager
         binding.goalListRecyclerView.adapter = adapter

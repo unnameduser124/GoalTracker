@@ -78,27 +78,49 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"/>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id = "@+id/edit_goal_time_amount_input_layout"
+            <NumberPicker
+                android:layout_width="wrap_content"
+                android:layout_height="120dp"
+                android:id = "@+id/edit_goal_hour_picker"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/edit_goal_minute_picker"
                 app:layout_constraintTop_toBottomOf="@id/edit_goal_time_amount_label"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                style = "?attr/textInputOutlinedStyle">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id = "@+id/edit_goal_time_amount_input"
-                    android:inputType="number"
-                    android:hint = "@string/goal_time_amount_input_hint"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                app:layout_constraintBottom_toTopOf="@id/edit_goal_start_time_label"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text = "@string/hours_shortcut_label"
+                app:layout_constraintStart_toEndOf="@id/edit_goal_hour_picker"
+                app:layout_constraintTop_toTopOf="@id/edit_goal_hour_picker"
+                app:layout_constraintBottom_toBottomOf="@id/edit_goal_hour_picker"
+                android:textSize = "20sp"
+                android:layout_marginStart="10dp"/>
+
+            <NumberPicker
+                android:layout_width="wrap_content"
+                android:layout_height="120dp"
+                android:id = "@+id/edit_goal_minute_picker"
+                app:layout_constraintStart_toEndOf="@id/edit_goal_hour_picker"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/edit_goal_hour_picker"
+                app:layout_constraintBottom_toBottomOf="@id/edit_goal_hour_picker"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text = "@string/minutes_shortcut_label"
+                app:layout_constraintStart_toEndOf="@id/edit_goal_minute_picker"
+                app:layout_constraintTop_toTopOf="@id/edit_goal_minute_picker"
+                app:layout_constraintBottom_toBottomOf="@id/edit_goal_minute_picker"
+                android:textSize = "20sp"
+                android:layout_marginStart="10dp"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id = "@+id/edit_goal_start_time_label"
-                app:layout_constraintTop_toBottomOf="@id/edit_goal_time_amount_input_layout"
+                app:layout_constraintTop_toBottomOf="@id/edit_goal_hour_picker"
                 android:text = "@string/goal_start_date_label"
                 android:textSize = "20sp"
                 android:layout_marginStart="10dp"

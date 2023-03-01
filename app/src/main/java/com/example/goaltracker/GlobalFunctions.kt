@@ -2,16 +2,18 @@ package com.example.goaltracker
 
 import android.content.Context
 import android.graphics.Color
-import android.widget.Toast
+import android.view.View
+import android.view.ViewGroup
+import android.widget.DatePicker
+import android.widget.NumberPicker
+import android.widget.PopupWindow
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.ValueFormatter
-import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.floor
@@ -33,18 +35,17 @@ fun setCalendarToDayEnd(calendar: Calendar): Calendar{
     calendar.set(Calendar.HOUR_OF_DAY, 23)
     calendar.set(Calendar.MINUTE, 59)
     calendar.set(Calendar.SECOND, 59)
-    calendar.set(Calendar.MILLISECOND, 0)
+    calendar.set(Calendar.MILLISECOND, 999)
     return calendar
 }
 
-fun getTimeDifferenceInDays(start: Calendar, end: Calendar): Int{
-    val timeInMillis = end.timeInMillis - start.timeInMillis
+fun getTimeDifferenceInDays(start: Long, end: Long): Int{
+    val timeInMillis = end - start
     return floor(timeInMillis/ MILLIS_IN_DAY.toDouble()).toInt()
 }
 
 fun getTimeInMonths(start: Long, end: Long): Int{
-
-    var monthDifference = 0
+    var monthDifference: Int
     val firstDateCalendar = Calendar.getInstance().apply { timeInMillis = start }
     val lastDateCalendar = Calendar.getInstance().apply { timeInMillis = end }
 
@@ -75,13 +76,15 @@ fun doubleHoursToHoursAndMinutes(duration: Double): Pair<Int, Int>{
     return Pair(hours, minutes)
 }
 
-fun hoursAndMinutesToDoubleHours(hours: Int, minutes: Int): Double{
-    return hours + minutes/60.0
-}
+fun makeLineChart(chart: LineChart,
+                  data: List<Pair<Calendar, Double>>,
+                  context: Context,
+                  chartLength: DurationPeriod){
 
-fun makeLineChart(chart: LineChart, data: List<Pair<Calendar, Double>>, context: Context, chartLength: DurationPeriod){
+    //setup chart data
     val entries = data.map{ Entry(it.first.timeInMillis.toFloat(), it.second.toFloat()) }
 
+    //setup chart line
     val lineDataSet = LineDataSet(entries, "Daily time")
     lineDataSet.colors = mutableListOf(Color.WHITE)
     lineDataSet.setDrawValues(false)
@@ -90,19 +93,23 @@ fun makeLineChart(chart: LineChart, data: List<Pair<Calendar, Double>>, context:
     lineDataSet.lineWidth = 2f
     val dataSets = ArrayList<ILineDataSet>()
     dataSets.add(lineDataSet)
-
     val lineData = LineData(dataSets)
+
+    //setup chart
     chart.data = lineData
     chart.setTouchEnabled(false)
     chart.setPinchZoom(false)
     chart.setDrawGridBackground(false)
 
+    //setup chart x axis value formatter
     val formatter = SimpleDateFormat("MMM dd", Locale.US)
     chart.xAxis.valueFormatter = object : ValueFormatter() {
         override fun getFormattedValue(value: Float): String {
             return formatter.format(Date(value.toLong()))
         }
     }
+
+    //setup chart y axis value formatter
     chart.axisLeft.valueFormatter = object: ValueFormatter(){
         override fun getFormattedValue(value: Float): String {
             val hourMinutePair = doubleHoursToHoursAndMinutes(value.toDouble())
@@ -114,6 +121,7 @@ fun makeLineChart(chart: LineChart, data: List<Pair<Calendar, Double>>, context:
         }
     }
 
+    //setup axes and gridlines visibility
     chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
     chart.xAxis.setDrawGridLines(false)
     chart.xAxis.setDrawAxisLine(true)
@@ -131,9 +139,14 @@ fun makeLineChart(chart: LineChart, data: List<Pair<Calendar, Double>>, context:
     lineChartMargin(chart, chartLength)
 }
 
-fun makeBarChart(chart: BarChart, data: List<Pair<Calendar, Double>>, context: Context, chartLength: DurationPeriod){
+fun makeBarChart(chart: BarChart,
+                 data: List<Pair<Calendar, Double>>,
+                 context: Context,
+                 chartLength: DurationPeriod){
+    //setup chart data
     val entries = data.map{ BarEntry(it.first.timeInMillis.toFloat(), it.second.toFloat()) }
 
+    //setup chart bars
     val barDataSet = BarDataSet(entries, "Daily time")
     barDataSet.colors = mutableListOf(Color.WHITE)
     barDataSet.setDrawValues(false)
@@ -141,24 +154,26 @@ fun makeBarChart(chart: BarChart, data: List<Pair<Calendar, Double>>, context: C
     barDataSet.barBorderColor = Color.WHITE
     barDataSet.highLightAlpha = 0
     barDataSet.valueTextColor = Color.WHITE
-
     val dataSets = ArrayList<IBarDataSet>()
     dataSets.add(barDataSet)
-
     val barData = BarData(dataSets)
+
+    //setup chart
     chart.data = barData
-    chart.setTouchEnabled(true)
+    chart.setTouchEnabled(false)
     chart.setPinchZoom(false)
     chart.setDrawGridBackground(false)
     chart.description.isEnabled = false
 
 
+    //setup chart x axis value formatter
     val formatter = SimpleDateFormat("MMM dd", Locale.US)
     chart.xAxis.valueFormatter = object : ValueFormatter() {
         override fun getFormattedValue(value: Float): String {
             return formatter.format(Date(value.toLong()))
         }
     }
+    //setup chart y axis value formatter
     chart.axisLeft.valueFormatter = object: ValueFormatter(){
         override fun getFormattedValue(value: Float): String {
             val hourMinutePair = doubleHoursToHoursAndMinutes(value.toDouble())
@@ -170,6 +185,7 @@ fun makeBarChart(chart: BarChart, data: List<Pair<Calendar, Double>>, context: C
         }
     }
 
+    //setup axes and gridlines visibility
     chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
     chart.xAxis.setDrawGridLines(false)
     chart.xAxis.setDrawAxisLine(true)
@@ -188,82 +204,126 @@ fun makeBarChart(chart: BarChart, data: List<Pair<Calendar, Double>>, context: C
     barChartMargin(chart, chartLength)
 }
 
+//add a margin of one day for the right and left side of the chart
 fun barChartMargin(chart: BarChart, durationPeriod: DurationPeriod){
-    if(durationPeriod == DurationPeriod.Month){
-        val startCalendar = setCalendarToDayStart(Calendar.getInstance())
-        startCalendar.add(Calendar.DAY_OF_YEAR, -30)
-        val endCalendar = setCalendarToDayStart(Calendar.getInstance())
-        endCalendar.add(Calendar.DAY_OF_YEAR, 1)
 
-        chart.xAxis.axisMaximum = endCalendar.timeInMillis.toFloat()
-        chart.xAxis.axisMinimum = startCalendar.timeInMillis.toFloat()
-    }
-    else if(durationPeriod == DurationPeriod.Year){
-        val startCalendar = setCalendarToDayStart(Calendar.getInstance())
-        startCalendar.add(Calendar.DAY_OF_YEAR, -365)
-        val endCalendar = setCalendarToDayStart(Calendar.getInstance())
-        endCalendar.add(Calendar.DAY_OF_YEAR, 1)
+    when (durationPeriod) {
+        DurationPeriod.Month -> {
+            val startCalendar = setCalendarToDayStart(Calendar.getInstance())
+            startCalendar.add(Calendar.DAY_OF_YEAR, -30)
+            val endCalendar = setCalendarToDayStart(Calendar.getInstance())
+            endCalendar.add(Calendar.DAY_OF_YEAR, 1)
 
-        chart.xAxis.axisMaximum = endCalendar.timeInMillis.toFloat()
-        chart.xAxis.axisMinimum = startCalendar.timeInMillis.toFloat()
-    }
-    else if(durationPeriod == DurationPeriod.ThisMonth){
-        val startCalendar = setCalendarToDayStart(Calendar.getInstance())
-        startCalendar.set(Calendar.DAY_OF_MONTH, startCalendar.getActualMaximum(Calendar.DAY_OF_MONTH))
-        val endCalendar = setCalendarToDayStart(Calendar.getInstance())
-        startCalendar.set(Calendar.DAY_OF_MONTH, endCalendar.getActualMinimum(Calendar.DAY_OF_MONTH) + 1)
+            chart.xAxis.axisMaximum = endCalendar.timeInMillis.toFloat()
+            chart.xAxis.axisMinimum = startCalendar.timeInMillis.toFloat()
+            chart.axisLeft.axisMinimum = 0f
+        }
+        DurationPeriod.Year -> {
+            val startCalendar = setCalendarToDayStart(Calendar.getInstance())
+            startCalendar.add(Calendar.DAY_OF_YEAR, -365)
+            val endCalendar = setCalendarToDayStart(Calendar.getInstance())
+            endCalendar.add(Calendar.DAY_OF_YEAR, 1)
 
-        chart.xAxis.axisMaximum = endCalendar.timeInMillis.toFloat()
-        chart.xAxis.axisMinimum = startCalendar.timeInMillis.toFloat()
-    }
-    else{
-        val startCalendar = setCalendarToDayStart(Calendar.getInstance())
-        startCalendar.set(Calendar.DAY_OF_YEAR, startCalendar.getActualMaximum(Calendar.DAY_OF_YEAR))
-        val endCalendar = setCalendarToDayStart(Calendar.getInstance())
-        startCalendar.set(Calendar.DAY_OF_YEAR, endCalendar.getActualMinimum(Calendar.DAY_OF_YEAR) + 1)
+            chart.xAxis.axisMaximum = endCalendar.timeInMillis.toFloat()
+            chart.xAxis.axisMinimum = startCalendar.timeInMillis.toFloat()
+            chart.axisLeft.axisMinimum = 0f
+        }
+        DurationPeriod.ThisMonth -> {
+            val startCalendar = setCalendarToDayStart(Calendar.getInstance())
+            startCalendar.set(Calendar.DAY_OF_MONTH, startCalendar.getActualMaximum(Calendar.DAY_OF_MONTH))
+            val endCalendar = setCalendarToDayStart(Calendar.getInstance())
+            startCalendar.set(Calendar.DAY_OF_MONTH, endCalendar.getActualMinimum(Calendar.DAY_OF_MONTH) + 1)
 
-        chart.xAxis.axisMaximum = endCalendar.timeInMillis.toFloat()
-        chart.xAxis.axisMinimum = startCalendar.timeInMillis.toFloat()
+            chart.xAxis.axisMaximum = endCalendar.timeInMillis.toFloat()
+            chart.xAxis.axisMinimum = startCalendar.timeInMillis.toFloat()
+            chart.axisLeft.axisMinimum = 0f
+        }
+        else -> {
+            val startCalendar = setCalendarToDayStart(Calendar.getInstance())
+            startCalendar.set(Calendar.DAY_OF_YEAR, startCalendar.getActualMaximum(Calendar.DAY_OF_YEAR))
+            val endCalendar = setCalendarToDayStart(Calendar.getInstance())
+            startCalendar.set(Calendar.DAY_OF_YEAR, endCalendar.getActualMinimum(Calendar.DAY_OF_YEAR) + 1)
+
+            chart.xAxis.axisMaximum = endCalendar.timeInMillis.toFloat()
+            chart.xAxis.axisMinimum = startCalendar.timeInMillis.toFloat()
+            chart.axisLeft.axisMinimum = 0f
+        }
     }
 }
 
+//add a margin of one day for the right and left side of the chart
 fun lineChartMargin(chart: LineChart, durationPeriod: DurationPeriod){
-    if(durationPeriod == DurationPeriod.Month){
-        val startCalendar = setCalendarToDayStart(Calendar.getInstance())
-        startCalendar.add(Calendar.DAY_OF_YEAR, -30)
-        val endCalendar = setCalendarToDayStart(Calendar.getInstance())
-        endCalendar.add(Calendar.DAY_OF_YEAR, 1)
 
-        chart.xAxis.axisMaximum = endCalendar.timeInMillis.toFloat()
-        chart.xAxis.axisMinimum = startCalendar.timeInMillis.toFloat()
-    }
-    else if(durationPeriod == DurationPeriod.Year){
-        val startCalendar = setCalendarToDayStart(Calendar.getInstance())
-        startCalendar.add(Calendar.DAY_OF_YEAR, -365)
-        val endCalendar = setCalendarToDayStart(Calendar.getInstance())
-        endCalendar.add(Calendar.DAY_OF_YEAR, 1)
+    when (durationPeriod) {
+        DurationPeriod.Month -> {
+            val startCalendar = setCalendarToDayStart(Calendar.getInstance())
+            startCalendar.add(Calendar.DAY_OF_YEAR, -30)
+            val endCalendar = setCalendarToDayStart(Calendar.getInstance())
+            endCalendar.add(Calendar.DAY_OF_YEAR, 1)
 
-        chart.xAxis.axisMaximum = endCalendar.timeInMillis.toFloat()
-        chart.xAxis.axisMinimum = startCalendar.timeInMillis.toFloat()
-        chart.axisLeft.axisMinimum = 0f
-    }
-    else if(durationPeriod == DurationPeriod.ThisMonth){
-        val startCalendar = setCalendarToDayStart(Calendar.getInstance())
-        startCalendar.set(Calendar.DAY_OF_MONTH, startCalendar.getActualMinimum(Calendar.DAY_OF_MONTH))
-        val endCalendar = setCalendarToDayStart(Calendar.getInstance())
-        endCalendar.set(Calendar.DAY_OF_MONTH, endCalendar.getActualMaximum(Calendar.DAY_OF_MONTH) + 1)
+            chart.xAxis.axisMaximum = endCalendar.timeInMillis.toFloat()
+            chart.xAxis.axisMinimum = startCalendar.timeInMillis.toFloat()
+            chart.axisLeft.axisMinimum = 0f
+        }
+        DurationPeriod.Year -> {
+            val startCalendar = setCalendarToDayStart(Calendar.getInstance())
+            startCalendar.add(Calendar.DAY_OF_YEAR, -365)
+            val endCalendar = setCalendarToDayStart(Calendar.getInstance())
+            endCalendar.add(Calendar.DAY_OF_YEAR, 1)
 
-        chart.xAxis.axisMaximum = endCalendar.timeInMillis.toFloat()
-        chart.xAxis.axisMinimum = startCalendar.timeInMillis.toFloat()
-    }
-    else{
-        val startCalendar = setCalendarToDayStart(Calendar.getInstance())
-        startCalendar.set(Calendar.DAY_OF_YEAR, startCalendar.getActualMinimum(Calendar.DAY_OF_YEAR))
-        val endCalendar = setCalendarToDayStart(Calendar.getInstance())
-        endCalendar.set(Calendar.DAY_OF_YEAR, endCalendar.getActualMaximum(Calendar.DAY_OF_YEAR) + 1)
+            chart.xAxis.axisMaximum = endCalendar.timeInMillis.toFloat()
+            chart.xAxis.axisMinimum = startCalendar.timeInMillis.toFloat()
+            chart.axisLeft.axisMinimum = 0f
+        }
+        DurationPeriod.ThisMonth -> {
+            val startCalendar = setCalendarToDayStart(Calendar.getInstance())
+            startCalendar.set(Calendar.DAY_OF_MONTH, startCalendar.getActualMinimum(Calendar.DAY_OF_MONTH))
+            val endCalendar = setCalendarToDayStart(Calendar.getInstance())
+            endCalendar.set(Calendar.DAY_OF_MONTH, endCalendar.getActualMaximum(Calendar.DAY_OF_MONTH) + 1)
 
-        chart.xAxis.axisMaximum = endCalendar.timeInMillis.toFloat()
-        chart.xAxis.axisMinimum = startCalendar.timeInMillis.toFloat()
-        chart.axisLeft.axisMinimum = 0f
+            chart.xAxis.axisMaximum = endCalendar.timeInMillis.toFloat()
+            chart.xAxis.axisMinimum = startCalendar.timeInMillis.toFloat()
+            chart.axisLeft.axisMinimum = 0f
+        }
+        else -> {
+            val startCalendar = setCalendarToDayStart(Calendar.getInstance())
+            startCalendar.set(Calendar.DAY_OF_YEAR, startCalendar.getActualMinimum(Calendar.DAY_OF_YEAR))
+            val endCalendar = setCalendarToDayStart(Calendar.getInstance())
+            endCalendar.set(Calendar.DAY_OF_YEAR, endCalendar.getActualMaximum(Calendar.DAY_OF_YEAR) + 1)
+
+            chart.xAxis.axisMaximum = endCalendar.timeInMillis.toFloat()
+            chart.xAxis.axisMinimum = startCalendar.timeInMillis.toFloat()
+            chart.axisLeft.axisMinimum = 0f
+        }
     }
+}
+
+fun createPopupWindow(popupLayout: View): PopupWindow{
+
+    val popupWindow = PopupWindow(
+        popupLayout,
+        ViewGroup.LayoutParams.WRAP_CONTENT,
+        ViewGroup.LayoutParams.WRAP_CONTENT,
+        true
+    )
+    popupWindow.contentView = popupLayout
+    return popupWindow
+}
+
+fun prepareNumberPicker(numberPicker: NumberPicker, minValue: Int, maxValue: Int, wrapSelectorWheel: Boolean, currentValue: Int){
+    numberPicker.minValue = minValue
+    numberPicker.maxValue = maxValue
+    numberPicker.wrapSelectorWheel = wrapSelectorWheel
+    numberPicker.value = currentValue
+}
+
+fun calendarFromDatePicker(datePicker: DatePicker): Calendar {
+    val calendar = Calendar.getInstance()
+    val year = datePicker.year
+    val month = datePicker.month
+    val day = datePicker.dayOfMonth
+    calendar.set(Calendar.YEAR, year)
+    calendar.set(Calendar.MONTH, month)
+    calendar.set(Calendar.DAY_OF_MONTH, day)
+    return calendar
 }

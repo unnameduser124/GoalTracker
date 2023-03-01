@@ -7,17 +7,13 @@ object GoalDatabaseConstants {
     const val DATABASE_NAME = "GoalDB.db"
     const val DATABASE_VERSION = 1
 
-    const val CREATE_COUNTDOWN_GOAL_TABLE_QUERY = "CREATE TABLE ${CountdownGoalTable.TABLE_NAME} (" +
-            "${BaseColumns._ID} INTEGER PRIMARY KEY AUTOINCREMENT," +
-            "${TimeGoalTable.GOAL_NAME} TEXT NOT NULL," +
-            "${CountdownGoalTable.START_TIME} INTEGER NOT NULL," +
-            "${CountdownGoalTable.END_TIME} INTEGER NOT NULL)"
     const val CREATE_TIME_GOAL_TABLE_QUERY = "CREATE TABLE ${TimeGoalTable.TABLE_NAME} (" +
             "${BaseColumns._ID} INTEGER PRIMARY KEY AUTOINCREMENT," +
             "${TimeGoalTable.GOAL_NAME} TEXT NOT NULL," +
             "${TimeGoalTable.START_TIME} INTEGER NOT NULL," +
             "${TimeGoalTable.GOAL_TIME_AMOUNT} REAL NOT NULL," +
             "${TimeGoalTable.DEADLINE} INTEGER NOT NULL)"
+
     const val CREATE_SESSION_TABLE_QUERY = "CREATE TABLE ${SessionTable.TABLE_NAME} (" +
             "${BaseColumns._ID} INTEGER PRIMARY KEY AUTOINCREMENT," +
             "${SessionTable.SESSION_DATE} INTEGER NOT NULL," +
@@ -26,14 +22,7 @@ object GoalDatabaseConstants {
 
     const val CLEAR_SESSION_TABLE_DATA = "DELETE FROM ${SessionTable.TABLE_NAME}"
     const val CLEAR_TIME_GOAL_TABLE_DATA = "DELETE FROM ${TimeGoalTable.TABLE_NAME}"
-    const val CLEAR_COUNTDOWN_GOAL_TABLE_DATA = "DELETE FROM ${CountdownGoalTable.TABLE_NAME}"
 
-    object CountdownGoalTable: BaseColumns{
-        const val TABLE_NAME = "CountdownGoals"
-        const val GOAL_NAME = "goalName"
-        const val START_TIME = "startTime"
-        const val END_TIME = "endTime"
-    }
     object TimeGoalTable: BaseColumns{
         const val TABLE_NAME = "TimeGoals"
         const val GOAL_NAME = "goalName"

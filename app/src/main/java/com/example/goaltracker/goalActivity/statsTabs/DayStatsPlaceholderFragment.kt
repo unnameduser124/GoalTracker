@@ -8,7 +8,6 @@ import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.goaltracker.*
-import com.example.goaltracker.database.GlobalStatsDatabaseService
 import com.example.goaltracker.database.GoalStatsDatabaseService
 import com.example.goaltracker.databinding.GoalStatsTabBinding
 
@@ -20,7 +19,7 @@ class DayStatsPlaceholderFragment(val goalID: Long): Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         pageViewModel = ViewModelProvider(this)[GoalActivityPageViewModel::class.java].apply {
-            setIndex(arguments?.getInt(DayStatsPlaceholderFragment.SECTION_NUMBER) ?: 1)
+            setIndex(arguments?.getInt(SECTION_NUMBER) ?: 1)
         }
     }
 
@@ -38,23 +37,21 @@ class DayStatsPlaceholderFragment(val goalID: Long): Fragment() {
 
     fun updateViews(){
         val dbService = GoalStatsDatabaseService(requireContext(), goalID)
-
-        val dayTime = doubleHoursToHoursAndMinutes(dbService.getGoalDayTime())
-        val avgExpected = doubleHoursToHoursAndMinutes(dbService.getGoalExpectedDayTime())
+        val dayTime = doubleHoursToHoursAndMinutes(dbService.getGoalTimeToday())
         binding.goalStatsDuration.text = String.format(
             requireContext().getString(R.string.hours_and_minutes_placeholder),
             dayTime.first,
             dayTime.second
         )
-        val avgExpectedValue = if(avgExpected.first > 0 && avgExpected.second > 0) avgExpected else Pair(0,0)
+        val avgExpected = dbService.getGoalExpectedDayTime()
+        val avgExpectedHoursAndMinutes = if(avgExpected != 0.0 ) doubleHoursToHoursAndMinutes(avgExpected) else Pair(0,0)
         binding.goalStatsAverageToReachGoal.text = String.format(
             requireContext().getString(R.string.hours_and_minutes_placeholder),
-            avgExpectedValue.first,
-            avgExpectedValue.second
+            avgExpectedHoursAndMinutes.first,
+            avgExpectedHoursAndMinutes.second
         )
         val progressValue = dayTime.first + dayTime.second/60.0
-        val avgExpectedProgressValue = avgExpected.first + avgExpected.second/60.0
-        binding.goalStatsProgress.text = if(progressValue != 0.0) roundDouble((progressValue/avgExpectedProgressValue) * 100, PERCENTAGE_ROUND_MULTIPLIER).toString() else "0.0"
+        binding.goalStatsProgress.text = if(progressValue != 0.0) roundDouble((progressValue/avgExpected) * 100, PERCENTAGE_ROUND_MULTIPLIER).toString() else "0.0"
 
         val dayAverage = dbService.getGoalAverageDailyTime()
         val dayAverageValue = if(dayAverage.isNaN()) Pair(0,0) else doubleHoursToHoursAndMinutes(dayAverage)
@@ -64,7 +61,6 @@ class DayStatsPlaceholderFragment(val goalID: Long): Fragment() {
             dayAverageValue.second
         )
     }
-
 
     companion object{
         private const val SECTION_NUMBER = "section number"

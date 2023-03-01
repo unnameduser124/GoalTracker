@@ -40,17 +40,19 @@ class GlobalStatsPlaceholderFragment: Fragment() {
         setUpViews(binding, dbService)
         val startDate = setCalendarToDayStart(Calendar.getInstance())
         startDate.add(Calendar.DAY_OF_YEAR, -30)
+        val dailyDurationDataset  = SessionDatabaseService(requireContext()).getDailyDurationList(
+            startDate.timeInMillis,
+            setCalendarToDayStart(Calendar.getInstance()).timeInMillis
+        )
         makeBarChart(
             binding.globalStatsTimeChart,
-            SessionDatabaseService(requireContext()).getDailyDurationList(
-                startDate.timeInMillis,
-                setCalendarToDayStart(Calendar.getInstance()).timeInMillis
-            ),
+            dailyDurationDataset,
             requireContext(),
             DurationPeriod.Month
         )
 
-        binding.globalStatsTimeChart.setOnChartValueSelectedListener(object: OnChartValueSelectedListener {
+        //show toast message on daily duration value touched, disabled because I don't really like it or find it useful
+        /*binding.globalStatsTimeChart.setOnChartValueSelectedListener(object: OnChartValueSelectedListener {
             override fun onValueSelected(e: Entry?, h: Highlight?) {
                 if(e?.y != null){
                     val hoursAndMinutes = doubleHoursToHoursAndMinutes(e.y.toDouble())
@@ -65,7 +67,7 @@ class GlobalStatsPlaceholderFragment: Fragment() {
 
             override fun onNothingSelected() {
             }
-        })
+        })*/
 
         return binding.root
     }

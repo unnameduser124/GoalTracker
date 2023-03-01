@@ -17,7 +17,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/session_value"
             tools:text = "01.01.2023 13:30"
-            android:textSize = "20sp"
+            android:textSize = "25sp"
             android:gravity="center"
             android:layout_margin="10dp"/>
         <TextView
@@ -29,11 +29,11 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/session_delete_button"
             tools:text = "1h 25min"
-            android:textSize = "20sp"
+            android:textSize = "25sp"
             android:gravity="center"
             android:layout_margin="10dp"/>
         <com.google.android.material.button.MaterialButton
-            android:layout_width="30dp"
+            android:layout_width="40dp"
             android:layout_height="0dp"
             app:layout_constraintDimensionRatio="1:1"
             android:id = "@+id/session_delete_button"
@@ -42,6 +42,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:background="@drawable/ic_baseline_delete_24"
+            android:padding="10dp"
             android:layout_margin="10dp"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

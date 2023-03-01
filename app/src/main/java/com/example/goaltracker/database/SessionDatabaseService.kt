@@ -4,7 +4,6 @@ import android.content.ContentValues
 import android.content.Context
 import android.provider.BaseColumns
 import com.example.goaltracker.dataClasses.DataGoalSession
-import com.example.goaltracker.dataClasses.DataTimeGoal
 import com.example.goaltracker.database.GoalDatabaseConstants.SessionTable.GOAL_ID
 import com.example.goaltracker.database.GoalDatabaseConstants.SessionTable.SESSION_DATE
 import com.example.goaltracker.database.GoalDatabaseConstants.SessionTable.TABLE_NAME
@@ -27,6 +26,7 @@ class SessionDatabaseService(context: Context): GoalDatabase(context) {
         db.insert(TABLE_NAME, null, contentValues)
     }
 
+    //never used, not deleting because having all of the CRUD operations for a single record can't be a bad idea
     fun getSessionByID(id: Long): DataGoalSession?{
         val db = this.readableDatabase
 
@@ -50,7 +50,7 @@ class SessionDatabaseService(context: Context): GoalDatabase(context) {
         )
 
         with(cursor){
-            while(moveToNext()) {
+            if(moveToFirst()) {
                 val goalID = getLong(getColumnIndexOrThrow(GOAL_ID))
                 val sessionID = getLong(getColumnIndexOrThrow(BaseColumns._ID))
                 val timeAmount = getDouble(getColumnIndexOrThrow(TIME_AMOUNT))
@@ -67,6 +67,7 @@ class SessionDatabaseService(context: Context): GoalDatabase(context) {
         return null
     }
 
+    //never used, not deleting because having all of the CRUD operations for a single record can't be a bad idea
     fun updateSessionByID(id: Long, session: GoalSession){
         val db = this.writableDatabase
 
@@ -100,9 +101,9 @@ class SessionDatabaseService(context: Context): GoalDatabase(context) {
         val projection = arrayOf(
             BaseColumns._ID,
             TIME_AMOUNT,
-            SESSION_DATE,
-            GOAL_ID
+            SESSION_DATE
         )
+
         val selection = "$GOAL_ID = ?"
         val selectionArgs = arrayOf(goalID.toString())
 
@@ -121,8 +122,8 @@ class SessionDatabaseService(context: Context): GoalDatabase(context) {
         with(cursor){
             while(moveToNext()) {
                 val sessionID = getLong(getColumnIndexOrThrow(BaseColumns._ID))
-                val timeAmount = getDouble(getColumnIndexOrThrow(TIME_AMOUNT))
                 val date = getLong(getColumnIndexOrThrow(SESSION_DATE))
+                val timeAmount = getDouble(getColumnIndexOrThrow(TIME_AMOUNT))
 
                 val goalSession = GoalSession(DataGoalSession(
                     sessionID,
@@ -139,7 +140,9 @@ class SessionDatabaseService(context: Context): GoalDatabase(context) {
     fun getCurrentTimeForGoal(goalID: Long): Double{
         val db = this.readableDatabase
 
-        val projection = arrayOf("SUM(${TIME_AMOUNT}) as SUMA")
+        val resultColumn = "SUMA"
+
+        val projection = arrayOf("SUM(${TIME_AMOUNT}) as $resultColumn")
 
         val selection = "$GOAL_ID = ?"
         val selectionArgs = arrayOf(goalID.toString())
@@ -153,8 +156,8 @@ class SessionDatabaseService(context: Context): GoalDatabase(context) {
             null)
 
         with(cursor){
-            while(moveToNext()){
-                return getDouble(getColumnIndexOrThrow("SUMA"))
+            if(moveToFirst()){
+                return getDouble(getColumnIndexOrThrow(resultColumn))
             }
         }
         return 0.0
@@ -163,18 +166,20 @@ class SessionDatabaseService(context: Context): GoalDatabase(context) {
     fun deleteSessionByGoalID(goalID: Long) {
         val db = this.writableDatabase
 
-        val selection = "${GOAL_ID} = ?"
+        val selection = "$GOAL_ID = ?"
 
         val selectionArgs = arrayOf(goalID.toString())
 
         db.delete(TABLE_NAME, selection, selectionArgs)
     }
 
-    fun getDailyDurationList(startDate: Long, endDate: Long, goalID: Long? = null): List<Pair<Calendar, Double>>{
+    fun getDailyDurationList(startDate: Long,
+                             endDate: Long,
+                             goalID: Long? = null): List<Pair<Calendar, Double>>{
+
         val db = this.readableDatabase
         val durationColumn = "Duration"
 
-        val durationList = mutableListOf<Pair<Calendar, Double>>()
 
         val projection = arrayOf(
             "SUM($TIME_AMOUNT) as $durationColumn",
@@ -183,8 +188,10 @@ class SessionDatabaseService(context: Context): GoalDatabase(context) {
 
         val groupBy = SESSION_DATE
 
-        val selection = if(goalID == null) "$SESSION_DATE >= ? AND $SESSION_DATE <= ?" else "$SESSION_DATE >= ? AND $SESSION_DATE <= ? AND $GOAL_ID = ?"
-        val selectionArgs = if(goalID == null) arrayOf(startDate.toString(), endDate.toString()) else arrayOf(startDate.toString(), endDate.toString(), goalID.toString())
+        val selection = if(goalID == null) "$SESSION_DATE >= ? AND $SESSION_DATE <= ?"
+            else "$SESSION_DATE >= ? AND $SESSION_DATE <= ? AND $GOAL_ID = ?"
+        val selectionArgs = if(goalID == null) arrayOf(startDate.toString(), endDate.toString())
+            else arrayOf(startDate.toString(), endDate.toString(), goalID.toString())
 
         val cursor = db.query(
             TABLE_NAME,
@@ -195,6 +202,8 @@ class SessionDatabaseService(context: Context): GoalDatabase(context) {
             null,
             null
         )
+
+        val durationList = mutableListOf<Pair<Calendar, Double>>()
 
         with(cursor){
             while(moveToNext()){

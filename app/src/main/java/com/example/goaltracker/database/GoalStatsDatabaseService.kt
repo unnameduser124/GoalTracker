@@ -7,7 +7,7 @@ import java.util.*
 
 class GoalStatsDatabaseService(val context: Context, val goalID: Long): GoalDatabase(context) {
 
-    fun getGoalDayTime(): Double{
+    fun getGoalTimeToday(): Double{//Total time spent on goal today
         val db = this.readableDatabase
         val resultColumn = "DayTime"
 
@@ -15,7 +15,8 @@ class GoalStatsDatabaseService(val context: Context, val goalID: Long): GoalData
 
         val today = setCalendarToDayStart(Calendar.getInstance())
 
-        val selection = "${GoalDatabaseConstants.SessionTable.GOAL_ID} = ? AND ${GoalDatabaseConstants.SessionTable.SESSION_DATE} = ?"
+        val selection = "${GoalDatabaseConstants.SessionTable.GOAL_ID} = ? " +
+                "AND ${GoalDatabaseConstants.SessionTable.SESSION_DATE} = ?"
         val selectionArgs = arrayOf(goalID.toString(), today.timeInMillis.toString())
 
         val cursor = db.query(
@@ -38,15 +39,16 @@ class GoalStatsDatabaseService(val context: Context, val goalID: Long): GoalData
 
     fun getGoalExpectedDayTime(): Double{
         val db = this.readableDatabase
-        val resultColumn = "TimeLeft"
+        val timeLeftColumn = "TimeLeft"
         val goalTimeColumn = "GoalTime"
         val deadlineColumn = "GoalDeadline"
 
         val goalTotalTime = "SELECT ${GoalDatabaseConstants.TimeGoalTable.GOAL_TIME_AMOUNT} FROM ${GoalDatabaseConstants.TimeGoalTable.TABLE_NAME} WHERE ${BaseColumns._ID} = $goalID"
+        val getDeadline = "SELECT ${GoalDatabaseConstants.TimeGoalTable.DEADLINE} FROM ${GoalDatabaseConstants.TimeGoalTable.TABLE_NAME} WHERE ${BaseColumns._ID} = $goalID"
         val projection = arrayOf(
             "($goalTotalTime) as $goalTimeColumn",
-            "SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) as $resultColumn",
-            "(SELECT ${GoalDatabaseConstants.TimeGoalTable.DEADLINE} FROM ${GoalDatabaseConstants.TimeGoalTable.TABLE_NAME} WHERE ${BaseColumns._ID} = $goalID) as $deadlineColumn"
+            "SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) as $timeLeftColumn",
+            "($getDeadline) as $deadlineColumn"
         )
         val selection = "${GoalDatabaseConstants.SessionTable.GOAL_ID} = ?"
         val selectionArgs = arrayOf(goalID.toString())
@@ -63,11 +65,13 @@ class GoalStatsDatabaseService(val context: Context, val goalID: Long): GoalData
 
         with(cursor){
             if(moveToFirst()){
-                val timeSpent = getDouble(getColumnIndexOrThrow(resultColumn))
+                val timeSpent = getDouble(getColumnIndexOrThrow(timeLeftColumn))
                 val goalTime = getDouble(getColumnIndexOrThrow(goalTimeColumn))
                 val deadline = getLong(getColumnIndexOrThrow(deadlineColumn))
-                val untilDeadline = (deadline - setCalendarToDayStart(Calendar.getInstance()).timeInMillis)/ MILLIS_IN_DAY
-                return if(untilDeadline == 0L) goalTime - timeSpent else if(timeSpent.isNaN()) goalTime/untilDeadline else (goalTime - timeSpent)/untilDeadline
+                val untilDeadline = getTimeDifferenceInDays(Calendar.getInstance().timeInMillis, deadline) + 1
+                return if(untilDeadline == 0) goalTime - timeSpent
+                    else if(timeSpent.isNaN()) goalTime/untilDeadline
+                    else (goalTime - timeSpent)/untilDeadline
             }
         }
 
@@ -102,7 +106,7 @@ class GoalStatsDatabaseService(val context: Context, val goalID: Long): GoalData
                 val today = setCalendarToDayStart(Calendar.getInstance())
                 val totalTime = getDouble(getColumnIndexOrThrow(totalTimeColumn))
 
-                val days = getTimeDifferenceInDays(Calendar.getInstance().apply { timeInMillis = startTime }, today) + 1
+                val days = getTimeDifferenceInDays(startTime, today.timeInMillis) + 1
                 return totalTime/days
             }
         }
@@ -110,9 +114,9 @@ class GoalStatsDatabaseService(val context: Context, val goalID: Long): GoalData
         return 0.0
     }
 
-    fun getGoalTimeThisMonth(): Double{
+    fun getGoalTimeThisMonth(): Double{//Total time spent on goal this month
         val db = this.readableDatabase
-        val resultColumn = "SUMA"
+        val timeThisMonthColumn = "MonthTime"
 
         val monthStart = setCalendarToDayStart(Calendar.getInstance())
         monthStart.set(Calendar.DAY_OF_MONTH, monthStart.getActualMinimum(Calendar.DAY_OF_MONTH))
@@ -122,7 +126,7 @@ class GoalStatsDatabaseService(val context: Context, val goalID: Long): GoalData
         val moreThan = monthStart.timeInMillis
         val lessThan = monthEnd.timeInMillis
 
-        val projection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) as $resultColumn")
+        val projection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) as $timeThisMonthColumn")
         val selection = "${GoalDatabaseConstants.SessionTable.SESSION_DATE} >= ? AND " +
                 "${GoalDatabaseConstants.SessionTable.SESSION_DATE} <= ? AND " +
                 "${GoalDatabaseConstants.SessionTable.GOAL_ID} = ?"
@@ -139,8 +143,8 @@ class GoalStatsDatabaseService(val context: Context, val goalID: Long): GoalData
         )
 
         with(cursor){
-            while(moveToNext()){
-                return getDouble(getColumnIndexOrThrow(resultColumn))
+            if(moveToFirst()){
+                return getDouble(getColumnIndexOrThrow(timeThisMonthColumn))
             }
         }
 
@@ -191,10 +195,11 @@ class GoalStatsDatabaseService(val context: Context, val goalID: Long): GoalData
         val goalTimeColumn = "GoalTime"
 
         val goalTotalTime = "SELECT ${GoalDatabaseConstants.TimeGoalTable.GOAL_TIME_AMOUNT} FROM ${GoalDatabaseConstants.TimeGoalTable.TABLE_NAME} WHERE ${BaseColumns._ID} = $goalID"
+        val getGoalDeadline = "SELECT ${GoalDatabaseConstants.TimeGoalTable.DEADLINE} FROM ${GoalDatabaseConstants.TimeGoalTable.TABLE_NAME} WHERE ${BaseColumns._ID} = $goalID"
         val projection = arrayOf(
             "($goalTotalTime) as $goalTimeColumn",
             "SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) as $timeSpentColumn",
-            "(SELECT ${GoalDatabaseConstants.TimeGoalTable.DEADLINE} FROM ${GoalDatabaseConstants.TimeGoalTable.TABLE_NAME} WHERE ${BaseColumns._ID} = $goalID) as $deadlineColumn"
+            "($getGoalDeadline) as $deadlineColumn"
         )
         val selection = "${GoalDatabaseConstants.SessionTable.GOAL_ID} = ?"
         val selectionArgs = arrayOf(goalID.toString())
@@ -216,7 +221,9 @@ class GoalStatsDatabaseService(val context: Context, val goalID: Long): GoalData
                 val deadline = getLong(getColumnIndexOrThrow(deadlineColumn))
                 val today = setCalendarToDayStart(Calendar.getInstance())
                 val untilDeadline = getTimeInMonths(today.timeInMillis, deadline)
-                return if(timeSpent.isNaN()) (goalTime + getGoalTimeThisMonth())/untilDeadline else (goalTime - timeSpent + getGoalTimeThisMonth())/untilDeadline
+                println("Until deadline: $untilDeadline")
+                return if(timeSpent.isNaN()) (goalTime + getGoalTimeThisMonth())/untilDeadline
+                    else (goalTime - timeSpent + getGoalTimeThisMonth())/untilDeadline
             }
         }
 
@@ -225,7 +232,7 @@ class GoalStatsDatabaseService(val context: Context, val goalID: Long): GoalData
 
     fun getGoalTimeThisYear(): Double{
         val db = this.readableDatabase
-        val resultColumn = "SUMA"
+        val yearTimeColumn = "YearTime"
 
         val yearStart = setCalendarToDayStart(Calendar.getInstance())
         yearStart.set(Calendar.MONTH, yearStart.getActualMinimum(Calendar.MONTH))
@@ -238,7 +245,7 @@ class GoalStatsDatabaseService(val context: Context, val goalID: Long): GoalData
         val moreThan = yearStart.timeInMillis
         val lessThan = yearEnd.timeInMillis
 
-        val projection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) as $resultColumn")
+        val projection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) as $yearTimeColumn")
         val selection = "${GoalDatabaseConstants.SessionTable.SESSION_DATE} >= ? AND " +
                 "${GoalDatabaseConstants.SessionTable.SESSION_DATE} <= ? AND " +
                 "${GoalDatabaseConstants.SessionTable.GOAL_ID} = ?"
@@ -255,8 +262,8 @@ class GoalStatsDatabaseService(val context: Context, val goalID: Long): GoalData
         )
 
         with(cursor){
-            while(moveToNext()){
-                return getDouble(getColumnIndexOrThrow(resultColumn))
+            if(moveToFirst()){
+                return getDouble(getColumnIndexOrThrow(yearTimeColumn))
             }
         }
 
@@ -307,10 +314,11 @@ class GoalStatsDatabaseService(val context: Context, val goalID: Long): GoalData
         val goalTimeColumn = "GoalTime"
 
         val goalTotalTime = "SELECT ${GoalDatabaseConstants.TimeGoalTable.GOAL_TIME_AMOUNT} FROM ${GoalDatabaseConstants.TimeGoalTable.TABLE_NAME} WHERE ${BaseColumns._ID} = $goalID"
+        val getGoalDeadline = "SELECT ${GoalDatabaseConstants.TimeGoalTable.DEADLINE} FROM ${GoalDatabaseConstants.TimeGoalTable.TABLE_NAME} WHERE ${BaseColumns._ID} = $goalID"
         val projection = arrayOf(
             "($goalTotalTime) as $goalTimeColumn",
             "SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) as $timeSpentColumn",
-            "(SELECT ${GoalDatabaseConstants.TimeGoalTable.DEADLINE} FROM ${GoalDatabaseConstants.TimeGoalTable.TABLE_NAME} WHERE ${BaseColumns._ID} = $goalID) as $deadlineColumn"
+            "($getGoalDeadline) as $deadlineColumn"
         )
         val selection = "${GoalDatabaseConstants.SessionTable.GOAL_ID} = ?"
         val selectionArgs = arrayOf(goalID.toString())
@@ -332,7 +340,8 @@ class GoalStatsDatabaseService(val context: Context, val goalID: Long): GoalData
                 val deadline = getLong(getColumnIndexOrThrow(deadlineColumn))
                 val today = setCalendarToDayStart(Calendar.getInstance())
                 val untilDeadline = getTimeInYears(today.timeInMillis, deadline)
-                return if(timeSpent.isNaN()) goalTime/untilDeadline else (goalTime - timeSpent + getGoalTimeThisYear())/untilDeadline
+                return if(timeSpent.isNaN()) goalTime/untilDeadline
+                    else (goalTime - timeSpent + getGoalTimeThisYear())/untilDeadline
             }
         }
 

@@ -22,7 +22,7 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
             null)
 
         with(cursor){
-            while(moveToNext()){
+            if(moveToFirst()){
                 return getDouble(getColumnIndexOrThrow(columnName))
             }
         }
@@ -31,7 +31,7 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
     fun getMostTimeInDay(): Double{
         val db = this.readableDatabase
 
-        val columnName = "SUMA"
+        val columnName = "MAX_A_DAY"
         val projection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) as $columnName")
 
         val groupBy = GoalDatabaseConstants.SessionTable.SESSION_DATE
@@ -47,7 +47,7 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
             orderBy)
 
         with(cursor) {
-            while (moveToNext()) {
+            if (moveToFirst()) {
                 return getDouble(getColumnIndexOrThrow(columnName))
             }
         }
@@ -57,7 +57,8 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
         val db = this.readableDatabase
 
         val columnName = "SUMA"
-        val projection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) as $columnName", GoalDatabaseConstants.SessionTable.GOAL_ID)
+        val projection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) as $columnName",
+            GoalDatabaseConstants.SessionTable.GOAL_ID)
 
         val groupBy = GoalDatabaseConstants.SessionTable.GOAL_ID
         val orderBy = "$columnName DESC"
@@ -72,7 +73,7 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
             orderBy)
 
         with(cursor) {
-            if(moveToNext()){
+            if(moveToFirst()){
                 return getLong(getColumnIndexOrThrow(GoalDatabaseConstants.SessionTable.GOAL_ID))
             }
 
@@ -82,12 +83,15 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
     fun getLongestActiveGoal(): Long{
         val db = this.readableDatabase
 
-        val projection = arrayOf("(${GoalDatabaseConstants.TimeGoalTable.DEADLINE}-${GoalDatabaseConstants.TimeGoalTable.START_TIME}) as DIFF",
+        val diffColumnName = "DIFF"
+
+        val projection = arrayOf(
+            "(${GoalDatabaseConstants.TimeGoalTable.DEADLINE}-${GoalDatabaseConstants.TimeGoalTable.START_TIME}) as $diffColumnName",
             BaseColumns._ID
         )
 
         val groupBy = BaseColumns._ID
-        val orderBy = "DIFF DESC"
+        val orderBy = "$diffColumnName DESC"
 
         val cursor = db.query(
             GoalDatabaseConstants.TimeGoalTable.TABLE_NAME,
@@ -99,7 +103,7 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
             orderBy)
 
         with(cursor) {
-            if(moveToNext()){
+            if(moveToFirst()){
                 return getLong(getColumnIndexOrThrow(BaseColumns._ID))
             }
 
@@ -108,9 +112,10 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
     }
     fun getAverageTimePerGoal(): Double{
         val db = this.readableDatabase
-        val columnName = "AVERAGE"
+        val averageColumnName = "AVERAGE"
 
-        val projection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT})/(SELECT COUNT( DISTINCT ${BaseColumns._ID}) FROM ${GoalDatabaseConstants.TimeGoalTable.TABLE_NAME}) as $columnName")
+        val countGoalsQuery = "SELECT COUNT( DISTINCT ${BaseColumns._ID}) FROM ${GoalDatabaseConstants.TimeGoalTable.TABLE_NAME}"
+        val projection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT})/($countGoalsQuery) as $averageColumnName")
 
         val cursor = db.query(
             GoalDatabaseConstants.SessionTable.TABLE_NAME,
@@ -122,8 +127,8 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
             null)
 
         with(cursor) {
-            if(moveToNext()){
-                return getDouble(getColumnIndexOrThrow(columnName))
+            if(moveToFirst()){
+                return getDouble(getColumnIndexOrThrow(averageColumnName))
             }
 
         }
@@ -152,16 +157,22 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
         )
 
         with(cursor){
-            while(moveToNext()){
+            if(moveToFirst()){
                 val timeAmount = getDouble(getColumnIndexOrThrow(timeAmountColumn))
                 val startTime = getLong(getColumnIndexOrThrow(startColumn))
                 val endTime = getLong(getColumnIndexOrThrow(endColumn))
                 val today = setCalendarToDayStart(Calendar.getInstance())
 
                 return if(endTime > today.timeInMillis){
-                    timeAmount / (getTimeDifferenceInDays(Calendar.getInstance().apply{ timeInMillis = startTime }, Calendar.getInstance().apply { timeInMillis = endTime }) + 1)
+                    timeAmount / (getTimeDifferenceInDays(
+                            startTime,
+                            endTime
+                    ) + 1)
                 } else{
-                    timeAmount / (getTimeDifferenceInDays(Calendar.getInstance().apply{ timeInMillis = startTime }, today) + 1)
+                    timeAmount / (getTimeDifferenceInDays(
+                        startTime,
+                        today.timeInMillis
+                    ) + 1)
                 }
             }
         }
@@ -175,6 +186,7 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
         val numberOfWeeksDecimal = "CAST(($dayDifference) as REAL) / $DAYS_IN_WEEK.0"
         val numberOfWeeksCeilRound = "CAST ( $numberOfWeeksDecimal as INT ) + ( $numberOfWeeksDecimal > CAST ( $numberOfWeeksDecimal as INT ))"
         val projection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) / CAST($numberOfWeeksCeilRound as REAL) as $columnName")
+        //maybe just get data from the database and perform calculations locally instead of using sql?
 
         val cursor = db.query(
             GoalDatabaseConstants.SessionTable.TABLE_NAME,
@@ -187,7 +199,7 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
         )
 
         with(cursor){
-            while(moveToNext()){
+            if(moveToFirst()){
                 return getDouble(getColumnIndexOrThrow(columnName))
             }
         }
@@ -196,12 +208,13 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
     fun getAverageTimePerMonth(): Double{
         val db = this.readableDatabase
 
-        val columnName = "VALUE"
+        val columnName = "TOTAL_TIME"
         val firstDateColumn = "FIRST"
         val lastDateColumn = "LAST"
 
 
-        val projection = arrayOf("MIN(${GoalDatabaseConstants.SessionTable.SESSION_DATE}) as $firstDateColumn", "MAX(${GoalDatabaseConstants.SessionTable.SESSION_DATE}) as $lastDateColumn")
+        val projection = arrayOf("MIN(${GoalDatabaseConstants.SessionTable.SESSION_DATE}) as $firstDateColumn",
+            "MAX(${GoalDatabaseConstants.SessionTable.SESSION_DATE}) as $lastDateColumn")
 
         val cursor = db.query(
             GoalDatabaseConstants.SessionTable.TABLE_NAME,
@@ -223,19 +236,11 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
                 val firstDateCalendar = Calendar.getInstance().apply { timeInMillis = firstDate }
                 val lastDateCalendar = Calendar.getInstance().apply { timeInMillis = lastDate }
 
-                val yearDifference = lastDateCalendar.get(Calendar.YEAR) - firstDateCalendar.get(Calendar.YEAR)
-                if(yearDifference == 0){
-                    monthDifference = lastDateCalendar.get(Calendar.MONTH) - firstDateCalendar.get(Calendar.MONTH) + 1
-                }
-                else{
-                    monthDifference = MONTHS_IN_YEAR * (yearDifference - 1)
-                    monthDifference += MONTHS_IN_YEAR - (firstDateCalendar.get(Calendar.MONTH) - 1)
-                    monthDifference += lastDateCalendar.get(Calendar.MONTH)
-                }
+                monthDifference = getTimeInMonths(firstDateCalendar.timeInMillis, lastDateCalendar.timeInMillis)
             }
         }
 
-        val resultProjection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) / $monthDifference.0 as $columnName")
+        val resultProjection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) as $columnName")
         val resultCursor = db.query(
             GoalDatabaseConstants.SessionTable.TABLE_NAME,
             resultProjection,
@@ -246,8 +251,9 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
             null
         )
         with(resultCursor){
-            while(moveToNext()){
-                return getDouble(getColumnIndexOrThrow(columnName))
+            if(moveToFirst()){
+                val totalTime =  getDouble(getColumnIndexOrThrow(columnName))
+                return totalTime / monthDifference
             }
         }
         return 0.0
@@ -255,7 +261,7 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
     fun getAverageTimePerYear(): Double{
         val db = this.readableDatabase
 
-        val columnName = "VALUE"
+        val columnName = "TOTAL_TIME"
         val firstDateColumn = "FIRST"
         val lastDateColumn = "LAST"
 
@@ -286,7 +292,7 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
             }
         }
 
-        val resultProjection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) / $yearDifference.0 as $columnName")
+        val resultProjection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) as $columnName")
         val resultCursor = db.query(
             GoalDatabaseConstants.SessionTable.TABLE_NAME,
             resultProjection,
@@ -298,14 +304,15 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
         )
         with(resultCursor){
             while(moveToNext()){
-                return getDouble(getColumnIndexOrThrow(columnName))
+                val totalTime =  getDouble(getColumnIndexOrThrow(columnName))
+                return totalTime / yearDifference
             }
         }
         return 0.0
     }
     fun getTimeWithinLastWeek(): Double{
         val db = this.readableDatabase
-        val resultColumn = "SUMA"
+        val resultColumn = "TOTAL_TIME"
 
         val currentDate = setCalendarToDayStart(Calendar.getInstance())
         val sevenDaysAgo = setCalendarToDayStart(Calendar.getInstance())
@@ -315,7 +322,8 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
         val lessThan = currentDate.timeInMillis
 
         val projection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) as $resultColumn")
-        val selection = "${GoalDatabaseConstants.SessionTable.SESSION_DATE} >= ? AND ${GoalDatabaseConstants.SessionTable.SESSION_DATE} <= ?"
+        val selection = "${GoalDatabaseConstants.SessionTable.SESSION_DATE} >= ? " +
+                "AND ${GoalDatabaseConstants.SessionTable.SESSION_DATE} <= ?"
         val selectionArgs = arrayOf(moreThan.toString(), lessThan.toString())
 
         val cursor = db.query(
@@ -329,16 +337,15 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
         )
 
         with(cursor){
-            while(moveToNext()){
+            if(moveToFirst()){
                 return getDouble(getColumnIndexOrThrow(resultColumn))
             }
         }
-
         return 0.0
     }
     fun getTimeThisMonth(): Double{
         val db = this.readableDatabase
-        val resultColumn = "SUMA"
+        val resultColumn = "TOTAL_TIME"
 
         val monthStart = setCalendarToDayStart(Calendar.getInstance())
         monthStart.set(Calendar.DAY_OF_MONTH, monthStart.getActualMinimum(Calendar.DAY_OF_MONTH))
@@ -349,7 +356,8 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
         val lessThan = monthEnd.timeInMillis
 
         val projection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) as $resultColumn")
-        val selection = "${GoalDatabaseConstants.SessionTable.SESSION_DATE} >= ? AND ${GoalDatabaseConstants.SessionTable.SESSION_DATE} <= ?"
+        val selection = "${GoalDatabaseConstants.SessionTable.SESSION_DATE} >= ? " +
+                "AND ${GoalDatabaseConstants.SessionTable.SESSION_DATE} <= ?"
         val selectionArgs = arrayOf(moreThan.toString(), lessThan.toString())
 
         val cursor = db.query(
@@ -383,7 +391,8 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
         val lessThan = yearEnd.timeInMillis
 
         val projection = arrayOf("SUM(${GoalDatabaseConstants.SessionTable.TIME_AMOUNT}) as $resultColumn")
-        val selection = "${GoalDatabaseConstants.SessionTable.SESSION_DATE} >= ? AND ${GoalDatabaseConstants.SessionTable.SESSION_DATE} <= ?"
+        val selection = "${GoalDatabaseConstants.SessionTable.SESSION_DATE} >= ? " +
+                "AND ${GoalDatabaseConstants.SessionTable.SESSION_DATE} <= ?"
         val selectionArgs = arrayOf(moreThan.toString(), lessThan.toString())
 
         val cursor = db.query(

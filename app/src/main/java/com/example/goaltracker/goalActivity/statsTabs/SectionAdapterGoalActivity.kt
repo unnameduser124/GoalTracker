@@ -14,13 +14,16 @@ private val TAB_TITLES = arrayOf(
 
 class SectionAdapterGoalActivity(fragmentManager: FragmentManager, val goalID: Long): FragmentPagerAdapter(fragmentManager){
     override fun getItem(position: Int): Fragment {
-        return if(position==0){
-            DayStatsPlaceholderFragment.newInstance(position, goalID)
-        } else if (position==1){
-            MonthStatsPlaceholderFragment.newInstance(position, goalID)
-        }
-        else{
-            YearStatsPlaceholderFragment.newInstance(position, goalID)
+        return when (position) {
+            0 -> {
+                DayStatsPlaceholderFragment.newInstance(position, goalID)
+            }
+            1 -> {
+                MonthStatsPlaceholderFragment.newInstance(position, goalID)
+            }
+            else -> {
+                YearStatsPlaceholderFragment.newInstance(position, goalID)
+            }
         }
     }
 
@@ -29,5 +32,4 @@ class SectionAdapterGoalActivity(fragmentManager: FragmentManager, val goalID: L
     override fun getPageTitle(position: Int): CharSequence {
         return TAB_TITLES[position]
     }
-
 }

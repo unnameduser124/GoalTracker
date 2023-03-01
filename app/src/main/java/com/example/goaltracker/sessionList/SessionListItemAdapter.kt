@@ -19,7 +19,7 @@ class SessionListItemAdapter(private val dataset: MutableList<GoalSession>,
 
     class ItemViewHolder(view: View): RecyclerView.ViewHolder(view){
         val sessionDate: TextView = view.findViewById(R.id.session_date)
-        val sessionTimeAmount: TextView = view.findViewById(R.id.session_value)
+        val sessionDuration: TextView = view.findViewById(R.id.session_value)
         val deleteButton: Button = view.findViewById(R.id.session_delete_button)
     }
 
@@ -35,8 +35,8 @@ class SessionListItemAdapter(private val dataset: MutableList<GoalSession>,
         holder.sessionDate.text = date
 
         val timeAmount = doubleHoursToHoursAndMinutes(session.timeAmount)
-        holder.sessionTimeAmount.text = String.format(
-            holder.sessionTimeAmount.context.getString(R.string.hours_and_minutes_placeholder),
+        holder.sessionDuration.text = String.format(
+            holder.sessionDuration.context.getString(R.string.hours_and_minutes_placeholder),
             timeAmount.first,
             timeAmount.second
         )
