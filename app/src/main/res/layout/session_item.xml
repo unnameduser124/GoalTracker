@@ -1,48 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/list_item_background"
+    android:layout_margin="5dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:id = "@+id/session_date"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/session_value"
-            tools:text = "01.01.2023 13:30"
-            android:textSize = "25sp"
-            android:gravity="center"
-            android:layout_margin="10dp"/>
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:id = "@+id/session_value"
-            app:layout_constraintStart_toEndOf="@id/session_date"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/session_delete_button"
-            tools:text = "1h 25min"
-            android:textSize = "25sp"
-            android:gravity="center"
-            android:layout_margin="10dp"/>
-        <com.google.android.material.button.MaterialButton
-            android:layout_width="40dp"
-            android:layout_height="0dp"
-            app:layout_constraintDimensionRatio="1:1"
-            android:id = "@+id/session_delete_button"
-            app:layout_constraintStart_toEndOf="@id/session_value"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:background="@drawable/ic_baseline_delete_24"
-            android:padding="10dp"
-            android:layout_margin="10dp"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</com.google.android.material.card.MaterialCardView>
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id = "@+id/session_date"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/session_value"
+        tools:text = "01.01.2023 13:30"
+        android:textSize = "25sp"
+        android:gravity="center"
+        android:layout_margin="10dp"/>
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id = "@+id/session_value"
+        app:layout_constraintStart_toEndOf="@id/session_date"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/session_delete_button"
+        tools:text = "1h 25min"
+        android:textSize = "25sp"
+        android:gravity="center"
+        android:layout_margin="10dp"/>
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="40dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:1"
+        android:id = "@+id/session_delete_button"
+        app:layout_constraintStart_toEndOf="@id/session_value"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/ic_baseline_delete_24"
+        android:padding="10dp"
+        android:layout_margin="10dp"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

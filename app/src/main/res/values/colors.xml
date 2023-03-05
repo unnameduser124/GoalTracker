@@ -3,5 +3,25 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="goal_item_gray">#424242</color>
-    <color name="delete_red">#e57373</color>
+
+    <!-- vibrant colors -->
+    <color name="delete_red">#D56062</color>
+    <color name="tab_indicator_blue">#928C6F</color>
+    <color name="background_color">#264653</color>
+    <color name="appbar_background_color">#002B3D</color>
+    <color name="button_icons_and_text_color">#EBFCFB</color>
+    <color name="tab_layout_color">#2D5362</color>
+    <color name="item_background_color">#2D5362</color>
+    <color name="popup_background_color">#2D5362</color>
+
+
+    <!-- toned down colors (looks trash) -->
+    <!--<color name="delete_red">#D56062</color>
+    <color name="tab_indicator_blue">#046277</color>
+    <color name="background_color">#1F1F1F</color>
+    <color name="appbar_background_color">#1E160B</color>
+    <color name="button_icons_color">#CBCDCB</color>
+    <color name="tab_layout_color">#292929</color>
+    <color name="item_background_color">#292929</color>
+    <color name="popup_background_color">#292929</color>-->
 </resources>

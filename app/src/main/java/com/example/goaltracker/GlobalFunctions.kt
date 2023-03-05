@@ -86,7 +86,7 @@ fun makeLineChart(chart: LineChart,
 
     //setup chart line
     val lineDataSet = LineDataSet(entries, "Daily time")
-    lineDataSet.colors = mutableListOf(Color.WHITE)
+    lineDataSet.colors = mutableListOf(context.getColor(R.color.button_icons_and_text_color))
     lineDataSet.setDrawValues(false)
     lineDataSet.setDrawCircles(false)
     lineDataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
@@ -125,16 +125,18 @@ fun makeLineChart(chart: LineChart,
     chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
     chart.xAxis.setDrawGridLines(false)
     chart.xAxis.setDrawAxisLine(true)
-    chart.xAxis.textColor = Color.WHITE
+    chart.xAxis.textColor = context.getColor(R.color.button_icons_and_text_color)
 
     chart.axisLeft.setDrawGridLines(false)
     chart.axisLeft.setDrawAxisLine(true)
-    chart.axisLeft.textColor = Color.WHITE
+    chart.axisLeft.textColor = context.getColor(R.color.button_icons_and_text_color)
 
     chart.axisRight.setDrawGridLines(false)
     chart.axisRight.setDrawAxisLine(false)
+    chart.axisRight.setDrawLabels(false)
 
     chart.legend.isEnabled = false
+    chart.description.isEnabled = false
 
     lineChartMargin(chart, chartLength)
 }
@@ -148,12 +150,12 @@ fun makeBarChart(chart: BarChart,
 
     //setup chart bars
     val barDataSet = BarDataSet(entries, "Daily time")
-    barDataSet.colors = mutableListOf(Color.WHITE)
+    barDataSet.colors = mutableListOf(context.getColor(R.color.button_icons_and_text_color))
     barDataSet.setDrawValues(false)
     barDataSet.barBorderWidth = if(chartLength == DurationPeriod.ThisMonth || chartLength == DurationPeriod.Month) 10f else 2f
-    barDataSet.barBorderColor = Color.WHITE
+    barDataSet.barBorderColor = context.getColor(R.color.button_icons_and_text_color)
     barDataSet.highLightAlpha = 0
-    barDataSet.valueTextColor = Color.WHITE
+    barDataSet.valueTextColor = context.getColor(R.color.button_icons_and_text_color)
     val dataSets = ArrayList<IBarDataSet>()
     dataSets.add(barDataSet)
     val barData = BarData(dataSets)
@@ -189,14 +191,15 @@ fun makeBarChart(chart: BarChart,
     chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
     chart.xAxis.setDrawGridLines(false)
     chart.xAxis.setDrawAxisLine(true)
-    chart.xAxis.textColor = Color.WHITE
+    chart.xAxis.textColor = context.getColor(R.color.button_icons_and_text_color)
 
     chart.axisLeft.setDrawGridLines(false)
     chart.axisLeft.setDrawAxisLine(true)
-    chart.axisLeft.textColor = Color.WHITE
+    chart.axisLeft.textColor = context.getColor(R.color.button_icons_and_text_color)
 
     chart.axisRight.setDrawGridLines(false)
     chart.axisRight.setDrawAxisLine(false)
+    chart.axisRight.setDrawLabels(false)
 
     chart.legend.isEnabled = false
 

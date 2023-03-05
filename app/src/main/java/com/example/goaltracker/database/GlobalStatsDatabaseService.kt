@@ -83,30 +83,41 @@ class GlobalStatsDatabaseService(context: Context): GoalDatabase(context) {
     fun getLongestActiveGoal(): Long{
         val db = this.readableDatabase
 
-        val diffColumnName = "DIFF"
-
         val projection = arrayOf(
-            "(${GoalDatabaseConstants.TimeGoalTable.DEADLINE}-${GoalDatabaseConstants.TimeGoalTable.START_TIME}) as $diffColumnName",
+            GoalDatabaseConstants.TimeGoalTable.START_TIME,
+            GoalDatabaseConstants.TimeGoalTable.DEADLINE,
             BaseColumns._ID
         )
-
-        val groupBy = BaseColumns._ID
-        val orderBy = "$diffColumnName DESC"
 
         val cursor = db.query(
             GoalDatabaseConstants.TimeGoalTable.TABLE_NAME,
             projection,
             null,
             null,
-            groupBy,
             null,
-            orderBy)
+            null,
+            null)
+
+        val goalDurationList = mutableListOf<Pair<Long, Int>>()
 
         with(cursor) {
-            if(moveToFirst()){
-                return getLong(getColumnIndexOrThrow(BaseColumns._ID))
-            }
+            while(moveToNext()){
+                val startTime = getLong(getColumnIndexOrThrow(GoalDatabaseConstants.TimeGoalTable.START_TIME))
+                val deadline = getLong(getColumnIndexOrThrow(GoalDatabaseConstants.TimeGoalTable.DEADLINE))
+                val goalID = getLong(getColumnIndexOrThrow(BaseColumns._ID))
+                val today = setCalendarToDayStart(Calendar.getInstance())
 
+                if(deadline > today.timeInMillis){
+                    val goalDuration = getTimeDifferenceInDays(startTime, today.timeInMillis)
+                    goalDurationList.add(Pair(goalID, goalDuration))
+                } else{
+                    val goalDuration = getTimeDifferenceInDays(startTime, deadline)
+                    goalDurationList.add(Pair(goalID, goalDuration))
+                }
+            }
+        }
+        if(goalDurationList.isNotEmpty()){
+            return goalDurationList.maxByOrNull { it.second }!!.first
         }
         return 0L
     }
