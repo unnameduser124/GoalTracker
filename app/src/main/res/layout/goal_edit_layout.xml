@@ -166,8 +166,8 @@
         app:layout_constraintEnd_toStartOf="@id/delete_goal_button"
         android:text="@string/save_changes_button_label"
         android:layout_marginTop="10dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="5dp"
         android:layout_marginBottom="10dp"/>
 
     <Button
